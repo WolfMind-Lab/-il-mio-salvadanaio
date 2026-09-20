@@ -501,27 +501,39 @@ document.querySelectorAll("#goalChoices .choice").forEach(b=>{
 
 
 function aggiornaAnteprimaPercorso(){
+  const goal =
+    Number(document.getElementById("goalInput").value) || 0;
 
-  const goal=Number(document.getElementById("goalInput").value)||0;
+  const customInput =
+    Number(document.getElementById("durationInput")?.value) || 0;
 
-  const months=Number(
-    document.querySelector("#durationChoices .selected")?.dataset.v||12
-  );
+  const selectedMonths =
+    Number(
+      document.querySelector("#durationChoices .selected")?.dataset.v
+    ) || 12;
 
-  document.getElementById("previewGoal").textContent=euro(goal);
+  const months =
+    customInput >= 1 ? Math.floor(customInput) : selectedMonths;
 
-  document.getElementById("previewMonths").textContent=
-    months+" "+(months===1?"mese":"mesi");
+  document.getElementById("previewGoal").textContent =
+    euro(goal);
 
-  document.getElementById("previewMonthly").textContent=
-    euro(goal/months);
+  document.getElementById("previewMonths").textContent =
+    months + " " + (months === 1 ? "mese" : "mesi");
+
+  document.getElementById("previewMonthly").textContent =
+    euro(goal / months);
 }
-
 
 document.getElementById("goalInput")?.addEventListener("input",()=>{
   aggiornaAnteprimaPercorso();
 });
+document.getElementById("durationInput")?.addEventListener("input",()=>{
+  document.querySelectorAll("#durationChoices .choice")
+    .forEach(x=>x.classList.remove("selected"));
 
+  aggiornaAnteprimaPercorso();
+});
 
 aggiornaAnteprimaPercorso();
 </script>
