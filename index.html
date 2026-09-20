@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#14213d">
+<title>Il mio Salvadanaio</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root{--navy:#14213d;--cream:#fff8ec;--gold:#d9a441;--pink:#f6d7d7;--ink:#202637;--green:#55a66a;--muted:#73798a}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--cream);color:var(--ink)}
+button{font-family:inherit;cursor:pointer}.app{max-width:480px;margin:auto;min-height:100vh;background:var(--cream);padding-bottom:82px}
+.card{background:#fff;border-radius:22px;margin:16px;padding:18px;box-shadow:0 5px 20px #14213d12}.label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.muted{color:var(--muted);font-size:13px}.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.progress{height:12px;background:#eee;border-radius:99px;overflow:hidden}.bar{height:100%;background:var(--gold);border-radius:99px}
+.btn{border:0;border-radius:15px;padding:13px 16px;font-weight:700;font-size:15px}.primary{background:var(--navy);color:#fff}.gold{background:var(--gold);color:#172033}.ghost{background:#f2eee6;color:var(--navy)}
+.screen{display:none}.screen.active{display:block}.top{padding:22px 18px 4px}.top h2{margin:0 0 4px}.top p{margin:0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.challenge{border:2px solid #eee;background:#fff;border-radius:16px;padding:15px;text-align:left}.challenge.done{border-color:var(--green);background:#eff9f1}.challenge .amount{font-size:22px;font-weight:800}.check{float:right;color:var(--green);font-weight:900}.step-label{display:block;margin-bottom:7px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.input{width:100%;padding:14px;border:1px solid #ddd;border-radius:14px;font-size:17px;margin:7px 0 14px;background:#fff}.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.choice{padding:12px;border:1px solid #ddd;border-radius:13px;background:#fff}.choice.selected{border:2px solid var(--gold);background:#fff8e8}.stat{flex:1;background:#fff;border-radius:17px;padding:14px}.stats{display:flex;gap:8px}.quote{background:var(--pink);border-radius:18px;padding:18px;text-align:center;font-family:Georgia,serif}
+.tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(480px,100%);background:#fff;border-top:1px solid #ddd;display:none;justify-content:space-around;padding:10px 4px calc(10px + env(safe-area-inset-bottom));z-index:10}.tab{border:0;background:none;color:var(--muted);font-size:11px}.tab.active{color:var(--navy);font-weight:800}.tab span{display:block;font-size:21px;margin-bottom:3px}
+.month-arrow{width:42px;height:42px;border:0;border-radius:50%;background:#fff;color:var(--navy);font-size:30px;line-height:1;box-shadow:0 3px 12px #14213d12}.month-arrow:disabled{opacity:.35;cursor:default}
+.home-header{padding:22px 18px 4px;display:flex;justify-content:space-between;align-items:flex-start}.brand-small{font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--gold);margin-bottom:6px}.home-header h2{margin:0;font-size:26px;color:var(--navy)}.home-header p{margin:4px 0 0;color:var(--muted);font-size:13px}.home-menu{width:42px;height:42px;border:0;border-radius:50%;background:#fff;color:var(--navy);font-size:22px;box-shadow:0 4px 14px #14213d12}
+.home-goal-card{background:linear-gradient(145deg,#fffdf8,#fff4dd);border:1px solid #ead7ad;text-align:center;padding:24px 20px}.home-goal-card .label{color:#8b7651}.home-goal-value{font-family:Georgia,serif;font-size:38px;font-weight:800;color:var(--navy);margin:5px 0 10px}.home-goal-sub{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted);margin-bottom:9px}.home-goal-sub span:first-child{font-weight:800;color:var(--navy)}.home-progress{height:10px}
+.home-saved-card{display:flex;align-items:center;gap:15px;background:var(--navy);color:#fff;position:relative;overflow:hidden}.home-saved-card:after{content:"€";position:absolute;right:20px;bottom:-22px;font-family:Georgia,serif;font-size:105px;font-weight:900;color:#ffffff08}.saved-icon{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px}.home-saved-card .label{color:#cbd2df}.saved-value{font-size:29px;font-weight:800;margin:2px 0}.euro-coin{position:relative;overflow:hidden;background:radial-gradient(circle at 35% 30%,#fff6cf 0 10%,#e9c76d 28%,#b88625 62%,#f6dc91 78%,#b47d1d 100%)!important;border:3px solid #f8e2a0;box-shadow:inset 0 0 0 2px #9f6d16,inset 0 0 12px #fff3b8,0 5px 12px #0003;color:#8a6118;font-family:Georgia,serif;transform:rotate(-8deg)}.euro-coin span{display:block;font-size:30px;line-height:25px;font-weight:900;text-shadow:1px 1px 0 #fff4c5,-1px -1px 0 #8f651b}.euro-coin small{display:block;font-size:8px;font-weight:900;letter-spacing:.05em;margin-top:2px;text-shadow:0 1px 0 #fff2bd}
+.home-month-card{padding:20px;background:linear-gradient(145deg,#fff,#fff8ec)}.month-icon{width:45px;height:45px;border-radius:15px;background:#f7e8c7;display:flex;align-items:center;justify-content:center;font-size:22px}.month-progress-info{display:flex;justify-content:space-between;align-items:center;margin:17px 0 8px;font-size:13px;color:var(--muted)}.month-progress-info span:last-child{font-weight:800;color:var(--navy)}.home-continue{width:100%;margin-top:15px;font-size:15px}
+.home-extra-card{display:flex;align-items:center;gap:13px;background:linear-gradient(145deg,#fffdf8,#fff4dd);border:1px solid #ead7ad}.extra-symbol{width:52px;height:52px;flex-shrink:0;border-radius:17px;background:#f8e7bd;display:flex;align-items:center;justify-content:center;font-size:27px}.extra-content{flex:1}.extra-content b{display:block;margin-top:3px;color:var(--navy)}.extra-content p{margin:5px 0 0;font-size:11px;line-height:1.4;color:var(--muted)}.extra-arrow{font-size:30px;color:var(--gold)}.home-quote{margin-top:18px;margin-bottom:10px;font-size:15px;line-height:1.55;box-shadow:none}
+.create-top{padding-top:24px}.step-number{font-size:10px;font-weight:800;color:var(--gold);letter-spacing:.12em;margin-bottom:7px}.create-top h2{font-size:27px}.create-card{padding:20px;background:linear-gradient(145deg,#fff,#fffaf1)}.create-section{margin-bottom:24px}.create-title{display:flex;align-items:center;gap:11px;margin-bottom:13px}.create-title>span{width:42px;height:42px;flex-shrink:0;border-radius:14px;background:#f8e8c5;display:flex;align-items:center;justify-content:center;font-size:21px}.create-title b{display:block;color:var(--navy);font-size:15px}.create-title small{display:block;margin-top:3px;color:var(--muted);font-size:11px}
+.goal-choices{grid-template-columns:repeat(2,1fr);gap:9px}.goal-choices .choice{min-height:68px;text-align:left;padding:12px}.goal-choices .choice strong{display:block;color:var(--navy);font-size:19px}.goal-choices .choice small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.custom-amount,.custom-duration{width:100%;margin-top:9px;padding:11px;border:1px solid #d9b86d;border-radius:13px;background:#fffdf8;color:var(--navy);font-weight:700}.duration-grid{grid-template-columns:repeat(4,1fr);gap:7px}.duration-grid .choice{padding:12px 5px;text-align:center}.duration-grid .choice strong{display:block;font-size:19px;color:var(--navy)}.duration-grid .choice small{color:var(--muted);font-size:10px}
+.method-list{display:flex;flex-direction:column;gap:9px}.method-option{width:100%;display:flex;align-items:center;gap:11px;padding:13px;border:1px solid #ddd;border-radius:15px;background:#fff;text-align:left}.method-option.selected{border:2px solid var(--gold);background:#fff8e8}.method-icon{width:40px;height:40px;border-radius:12px;background:#f5f0e7;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}.method-option>span:nth-child(2){flex:1}.method-option strong{display:block;font-size:14px;color:var(--navy)}.method-option small{display:block;margin-top:3px;color:var(--muted);font-size:10px}.method-check{width:23px;height:23px;border-radius:50%;border:1px solid #ccc;display:flex;align-items:center;justify-content:center;color:transparent;font-size:13px}.method-option.selected .method-check{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+.create-preview{background:var(--navy);color:#fff;border-radius:19px;padding:18px;margin-top:5px}.preview-label{font-size:10px;letter-spacing:.1em;color:#cfd5df;font-weight:800}.preview-main{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;margin-top:7px}.preview-main span:first-child,.preview-main span:last-child{font-size:24px;font-weight:800}.preview-main span:nth-child(2){font-size:12px;color:#cfd5df}.preview-text{margin-top:7px;color:#dfe3ea;font-size:11px;line-height:1.4}.preview-text b{color:#f4d47d}.create-next{width:100%;margin-top:16px;padding:15px}
+.badges-card{background:linear-gradient(145deg,#fffdf8,#fff7e5)}.badges-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}.badge-item{background:#fff;border:2px solid #eee;border-radius:18px;padding:15px 10px;text-align:center}.badge-item.unlocked{border-color:var(--gold);background:#fffaf0;box-shadow:0 4px 14px #d9a44120}.badge-icon{font-size:32px;margin-bottom:7px;filter:grayscale(1);opacity:.35}.badge-item.unlocked .badge-icon{filter:none;opacity:1}.badge-name{font-weight:800;font-size:14px}.badge-desc{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.3}.badge-status{margin-top:7px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#999}.badge-item.unlocked .badge-status{color:var(--gold)}.traguardo-box{margin-top:14px;background:var(--navy);color:#fff;border-radius:18px;padding:16px}.traguardo-box .label{color:#dfe4ef}.traguardo-progress{height:8px;background:#ffffff25;border-radius:99px;overflow:hidden;margin-top:10px}.traguardo-progress div{height:100%;background:var(--gold);border-radius:99px}.traguardo-text{margin-top:8px;font-size:13px;color:#e7eaf1}
+.welcome-screen{min-height:calc(100vh - 20px);background:var(--navy);color:#fff;border-radius:0 0 32px 32px;padding:28px 22px 30px;position:relative;overflow:hidden;text-align:center}.welcome-screen:before{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:#ffffff06;top:-100px;right:-90px}.welcome-screen:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:#d9a44108;bottom:-100px;left:-80px}.welcome-brand{position:relative;z-index:2;text-align:left;font-size:14px;font-weight:800;letter-spacing:.08em}.welcome-content{position:relative;z-index:2;min-height:calc(100vh - 150px);display:flex;flex-direction:column;align-items:center;justify-content:center}.welcome-moon{font-size:48px;margin-bottom:2px;filter:drop-shadow(0 5px 12px #d9a44155)}.welcome-pig{position:relative;font-size:94px;line-height:1;margin:8px 0 18px;filter:drop-shadow(0 10px 14px #0005)}.welcome-pig span{position:absolute;top:-8px;left:50%;transform:translateX(-50%) rotate(-5deg);font-size:35px;color:var(--gold);text-shadow:0 2px 4px #0006}.welcome-content h1{font-family:Georgia,serif;font-size:38px;line-height:1.08;margin:0;color:#fff}.welcome-content p{margin:15px 0 24px;font-size:16px;line-height:1.5;color:#e4e7ef}.welcome-button{width:min(300px,90%);padding:16px;border-radius:18px;font-size:17px;box-shadow:0 8px 20px #0003}.welcome-stars{position:absolute;z-index:2;bottom:22px;left:0;width:100%;color:#f5d77d;font-size:16px;opacity:.85}
+#home{display:none}.app.started #home.screen.active{display:block}.app.started .tabs{display:flex}.app.started #welcome{display:none}
+@media(max-width:360px){.duration-grid{grid-template-columns:repeat(2,1fr)}.create-card{padding:16px}.home-goal-value{font-size:33px}.saved-value{font-size:25px}.home-header h2{font-size:23px}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<section id="welcome" class="screen welcome-screen active">
+  <div class="welcome-brand">✦ IL MIO SALVADANAIO</div>
+  <div class="welcome-content">
+    <div class="welcome-moon">🌙</div>
+    <div class="welcome-pig">🐷<span>♛</span></div>
+    <h1>Piccoli passi,<br>grandi sogni.</h1>
+    <p>Il tuo risparmio,<br>un passo alla volta.</p>
+    <button class="btn gold welcome-button" onclick="iniziaSalvadanaio()">Inizia</button>
+  </div>
+  <div class="welcome-stars">✦　⋆　✦　　⋆　✦</div>
+</section>
+
+<section id="home" class="screen">
+  <div class="home-header">
+    <div><div class="brand-small">✦ IL MIO SALVADANAIO</div><h2>Il tuo risparmio</h2><p>Piccoli passi, grandi sogni.</p></div>
+    <button class="home-menu" onclick="show('profile')">☰</button>
+  </div>
+
+  <div class="card home-goal-card">
+    <div class="label">Il mio obiettivo</div>
+    <div class="home-goal-value" id="goalText">€1.000,00</div>
+    <div class="home-goal-sub"><span id="percent">0%</span><span id="remaining">Ti mancano €1.000,00</span></div>
+    <div class="progress home-progress"><div class="bar" id="goalBar" style="width:0%"></div></div>
+  </div>
+
+  <div class="card home-saved-card">
+    <div class="saved-icon euro-coin"><span>1</span><small>EURO</small></div>
+    <div><div class="label">Hai risparmiato</div><div class="saved-value" id="homeSavedValue">€0,00</div><div class="muted">Ogni piccolo passo conta.</div></div>
+  </div>
+
+  <div class="card month home-month-card">
+    <div class="row"><div><div class="label" id="monthName">Questo mese</div><b id="monthGoal">Obiettivo €83,33</b></div><span class="month-icon">📅</span></div>
+    <div class="month-progress-info"><span id="monthSaved">€0 / €83,33</span><span id="monthPercent">0%</span></div>
+    <div class="progress"><div class="bar" id="monthBar" style="width:0%"></div></div>
+    <button class="btn gold home-continue" onclick="show('calendar')">Continua il percorso →</button>
+  </div>
+
+  <div class="card home-extra-card">
+    <div class="extra-symbol">💎</div>
+    <div class="extra-content"><div class="label">Il tuo lusso del mese</div><b id="extraHome">💎 Bonus Extra · €17</b><p>Una piccola rinuncia oggi per qualcosa che desideri davvero.</p></div>
+    <span class="extra-arrow">›</span>
+  </div>
+
+  <div class="quote home-quote">“Ogni euro messo da parte è un passo verso qualcosa che desideri davvero.”</div>
+</section>
+
+<section id="create" class="screen">
+  <div class="top create-top"><div class="step-number">PASSO 1 DI 3</div><h2>Crea il tuo salvadanaio</h2><p>Costruiamo insieme il tuo percorso di risparmio.</p></div>
+  <div class="card create-card">
+
+    <div class="create-section">
+      <div class="create-title"><span>💰</span><div><b>Quanto vuoi risparmiare?</b><small>Scegli il tuo obiettivo.</small></div></div>
+      <div class="choices goal-choices" id="goalChoices">
+        <button class="choice" data-v="250"><strong>€250</strong><small>Piccolo passo</small></button>
+        <button class="choice" data-v="500"><strong>€500</strong><small>Buon inizio</small></button>
+        <button class="choice selected" data-v="1000"><strong>€1.000</strong><small>Il tuo obiettivo</small></button>
+        <button class="choice" data-v="2000"><strong>€2.000</strong><small>Grande sogno</small></button>
+      </div>
+      <button class="custom-amount" onclick="document.getElementById('goalInput').focus()">✏️ Importo personalizzato</button>
+      <input id="goalInput" class="input" type="number" min="1" value="1000" step="10" placeholder="Inserisci il tuo importo">
+    </div>
+
+    <div class="create-section">
+      <div class="create-title"><span>📅</span><div><b>In quanto tempo?</b><small>Scegli la durata del percorso.</small></div></div>
+      <div class="choices duration-grid" id="durationChoices">
+        <button class="choice" data-v="3"><strong>3</strong><small>mesi</small></button>
+        <button class="choice" data-v="6"><strong>6</strong><small>mesi</small></button>
+        <button class="choice selected" data-v="12"><strong>12</strong><small>mesi</small></button>
+        <button class="choice" data-v="24"><strong>24</strong><small>mesi</small></button>
+      </div>
+      <button class="custom-duration" onclick="document.getElementById('durationInput').focus()">✏️ Durata personalizzata</button>
+      <input id="durationInput" class="input" type="number" min="1" step="1" placeholder="Inserisci il numero di mesi">
+    </div>
+
+    <div class="create-section">
+      <div class="create-title"><span id="methodTitleIcon">🎲</span><div><b>Come vuoi risparmiare?</b><small id="methodTitleDescription">Scegli il ritmo che preferisci.</small></div></div>
+      <div class="method-list" id="methodChoices">
+        <button class="method-option selected" data-v="variable"><span class="method-icon">🎲</span><span><strong>Importi variabili</strong><small>Ogni mese una sfida diversa.</small></span><span class="method-check">✓</span></button>
+        <button class="method-option" data-v="steady"><span class="method-icon">📌</span><span><strong>Importi regolari</strong><small>Un ritmo più semplice e prevedibile.</small></span><span class="method-check">✓</span></button>
+      </div>
+    </div>
+
+    <div class="create-preview">
+      <div class="preview-label">IL TUO PERCORSO</div>
+      <div class="preview-main"><span id="previewGoal">€1.000</span><span>in</span><span id="previewMonths">12 mesi</span></div>
+      <div class="preview-text" id="previewText">Circa <b id="previewMonthly">€83,33</b> al mese, con importi pensati per il tuo percorso.</div>
+    </div>
+
+    <button class="btn primary create-next" onclick="createPlan()">Avanti →</button>
+  </div>
+</section>
+
+<section id="calendar" class="screen">
+  <div class="top row" id="calendarHeader">
+    <button class="month-arrow" id="prevMonth" onclick="cambiaMese(-1)" aria-label="Mese precedente">‹</button>
+    <div style="text-align:center"><h2 id="calTitle">Settembre 2026</h2><p id="calSubtitle">Mese 1 di 12 · Il tuo percorso</p></div>
+    <button class="month-arrow" id="nextMonth" onclick="cambiaMese(1)" aria-label="Mese successivo">›</button>
+  </div>
+  <div class="card"><div class="row"><div><div class="label">Obiettivo del mese</div><div class="big" id="calGoal">€83,33</div></div><div style="text-align:right"><b id="calPct">0%</b><div class="muted" id="calSaved">€0 risparmiati</div></div></div><div class="progress"><div class="bar" id="calBar" style="width:0%"></div></div></div>
+  <div class="card"><div class="label" style="margin-bottom:10px">Caselle del mese</div><div class="grid" id="challengeGrid"></div></div>
+  <div class="card" style="background:#fdf2d8"><div class="row"><div><div class="label">Bonus Extra</div><b id="extraAmount">💎 €13</b><div class="muted">Il tuo piccolo lusso del mese</div></div><button id="extraButton" class="btn gold" onclick="toggleExtra()">Aggiungi</button></div></div>
+</section>
+
+<section id="progress" class="screen">
+  <div class="top"><h2>I miei progressi</h2><p>Guarda quanto hai costruito.</p></div>
+  <div class="card stats"><div class="stat"><div class="label">Risparmiato</div><b id="pSaved">€0</b></div><div class="stat"><div class="label">Obiettivo</div><b id="pGoal">€1.000</b></div></div>
+  <div class="card"><div class="label">Avanzamento</div><div style="font-size:50px;font-weight:800;text-align:center;margin:15px" id="pPct">0%</div><div class="progress"><div class="bar" id="pBar" style="width:0%"></div></div></div>
+</section>
+
+<section id="profile" class="screen">
+  <div class="top"><h2>Il mio profilo</h2><p>Le tue preferenze.</p></div>
+  <div class="card"><div class="row"><span>👤 Nome</span><b>Il mio Salvadanaio</b></div><hr><div class="row"><span>🌙 Tema</span><b>Celestiale</b></div><hr><div class="row"><span>🔔 Promemoria</span><button class="btn ghost" onclick="alert('Nel prototipo i promemoria sono disattivati.')">Gestisci</button></div><hr><div class="row"><span>🗑️ Ricomincia</span><button class="btn ghost" onclick="resetApp()">Reset</button></div></div>
+</section>
+
+<nav class="tabs">
+ <button class="tab active" data-screen="home"><span>🏠</span>Home</button>
+ <button class="tab" data-screen="calendar"><span>📅</span>Calendario</button>
+ <button class="tab" data-screen="create"><span>💰</span>Salvadanaio</button>
+ <button class="tab" data-screen="progress"><span>📊</span>Progressi</button>
+ <button class="tab" data-screen="profile"><span>👤</span>Profilo</button>
+</nav>
+</div>
+
+<script>
+const key="mioSalvadanaioV2";
+const mesi=["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
+const bonus=[13,21,16,28,11,24,19,31,17,26,14,35];
+const euro=n=>new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"}).format(Number(n)||0);
+
+function meseAssoluto(d=new Date()){return d.getFullYear()*12+d.getMonth();}
+function nuovaState(){
+  const start=meseAssoluto();
+  return {goal:1000,months:12,method:"variable",saved:0,done:[],extraDone:{},startMonth:start};
+}
+
+let state=JSON.parse(localStorage.getItem(key)||"null")||nuovaState();
+let currentMonth=Number(state.startMonth);
+if(!Number.isFinite(currentMonth)) currentMonth=meseAssoluto();
+if(!Number.isFinite(state.months)||state.months<1) state.months=12;
+if(!state.extraDone||typeof state.extraDone!=="object") state.extraDone={};
+if(!Array.isArray(state.done)) state.done=[];
+if(!Number.isFinite(state.startMonth)){state.startMonth=meseAssoluto();currentMonth=state.startMonth;}
+
+function save(){localStorage.setItem(key,JSON.stringify(state));render();}
+function indicePercorso(mese){return mese-state.startMonth;}
+function dataMese(mese){return new Date(Math.floor(mese/12),((mese%12)+12)%12,1);}
+function extraFor(mese){const i=indicePercorso(mese);return bonus[((i%12)+12)%12];}
+
+function monthPlan(){
+  const avg=state.goal/state.months;
+  const vals=[];
+  for(let i=0;i<state.months;i++){
+    const wiggle=state.method==="variable"?Math.sin(i*2.17)*avg*.22:0;
+    vals.push(Math.max(.01,avg+wiggle));
+  }
+  const sum=vals.reduce((a,b)=>a+b,0);
+  return vals.map(v=>v*state.goal/sum);
+}
+
+function monthChallenges(mese){
+  const i=indicePercorso(mese);
+  if(i<0||i>=state.months)return [];
+  const target=monthPlan()[i]??state.goal/state.months;
+  const n=8, base=Math.floor(target/n);
+  let rem=Math.round(target)-base*n;
+  const vals=Array(n).fill(base);
+  for(let j=0;j<Math.abs(rem);j++) vals[j%n]+=rem>0?1:-1;
+  return vals.filter(v=>v>0).map(v=>Math.round(v));
+}
+
+function monthSaved(mese){
+  const regular=state.done.filter(x=>x.m===mese).reduce((a,x)=>a+x.v,0);
+  return regular+(state.extraDone[mese]?extraFor(mese):0);
+}
+
+function updatePreview(){
+  const goal=Number(document.getElementById("goalInput").value)||0;
+  const custom=Number(document.getElementById("durationInput").value)||0;
+  const selected=Number(document.querySelector("#durationChoices .selected")?.dataset.v)||12;
+  const months=custom>=1?Math.floor(custom):selected;
+  document.getElementById("previewGoal").textContent=euro(goal);
+  document.getElementById("previewMonths").textContent=months+" "+(months===1?"mese":"mesi");
+  document.getElementById("previewMonthly").textContent=euro(months?goal/months:0);
+}
+
+function updateMethod(){
+  const method=document.querySelector("#methodChoices .selected")?.dataset.v||"variable";
+  document.getElementById("methodTitleIcon").textContent=method==="steady"?"📌":"🎲";
+  document.getElementById("methodTitleDescription").textContent=method==="steady"?"Un ritmo semplice e prevedibile.":"Ogni mese una sfida diversa.";
+  const text=document.getElementById("previewText");
+  text.innerHTML=method==="steady"
+    ? 'Ogni mese metterai da parte circa <b id="previewMonthly"></b>, con un importo costante.'
+    : 'Circa <b id="previewMonthly"></b> al mese, con importi pensati per il tuo percorso.';
+  updatePreview();
+}
+
+function updateBadges(){
+  const container=document.getElementById("badgesContainer");
+  if(!container)return;
+  const goal=Number(state.goal)||1000,saved=Math.max(0,Number(state.saved)||0),pct=Math.min(100,saved/goal*100);
+  const badges=[
+    ["🌱","Primo passo","Completa la prima casella.",state.done.length>0],
+    ["⭐","Primi €100","Metti da parte almeno €100.",saved>=100],
+    ["🌙","Un quarto del cammino","Raggiungi il 25%.",pct>=25],
+    ["✨","Metà strada","Raggiungi il 50%.",pct>=50],
+    ["💎","Quasi arrivata","Raggiungi il 75%.",pct>=75],
+    ["🏆","Obiettivo raggiunto","Completa il salvadanaio.",saved>=goal]
+  ];
+  container.innerHTML=`
+    <div class="label">I miei traguardi</div>
+    <h3 style="margin:5px 0 0">🏆 Piccoli passi, grandi conquiste</h3>
+    <div class="badges-grid">${badges.map(b=>`
+      <div class="badge-item ${b[3]?"unlocked":""}">
+        <div class="badge-icon">${b[0]}</div><div class="badge-name">${b[1]}</div>
+        <div class="badge-desc">${b[2]}</div>
+        <div class="badge-status">${b[3]?"✓ Sbloccato":"🔒 Da sbloccare"}</div>
+      </div>`).join("")}</div>
+    <div class="traguardo-box">
+      <div class="label">PROSSIMO TRAGUARDO</div>
+      <b>${saved>=goal?"🎉 Hai completato il tuo salvadanaio!":pct>=50?"💎 Ti aspetta il 75%":pct>=25?"✨ Il prossimo passo è il 50%":"🌙 Il primo traguardo è il 25%"}</b>
+      <div class="traguardo-progress"><div style="width:${pct}%"></div></div>
+      <div class="traguardo-text">${euro(saved)} di ${euro(goal)} · ${pct.toFixed(1)}%</div>
+    </div>`;
+}
+
+function render(){
+  const goal=Number(state.goal)||1000,saved=Math.max(0,Number(state.saved)||0);
+  const pct=Math.min(100,saved/goal*100),rem=Math.max(0,goal-saved);
+  document.getElementById("goalText").textContent=euro(goal);
+  document.getElementById("goalBar").style.width=pct+"%";
+  document.getElementById("percent").textContent=pct.toFixed(1)+"%";
+  document.getElementById("remaining").textContent=rem?"Ti mancano "+euro(rem):"Obiettivo raggiunto!";
+  const i=indicePercorso(currentMonth);
+  const target=monthPlan()[i]??goal/state.months;
+  const savedM=monthSaved(currentMonth);
+  const mp=Math.min(100,target?savedM/target*100:0);
+  document.getElementById("homeSavedValue").textContent=euro(saved);
+  document.getElementById("monthGoal").textContent="Obiettivo "+euro(target);
+  document.getElementById("monthSaved").textContent=euro(savedM)+" / "+euro(target);
+  document.getElementById("monthPercent").textContent=mp.toFixed(0)+"%";
+  document.getElementById("monthBar").style.width=mp+"%";
+  document.getElementById("extraHome").textContent="💎 Bonus Extra · "+euro(extraFor(currentMonth));
+  document.getElementById("pSaved").textContent=euro(saved);
+  document.getElementById("pGoal").textContent=euro(goal);
+  document.getElementById("pPct").textContent=pct.toFixed(1)+"%";
+  document.getElementById("pBar").style.width=pct+"%";
+  renderCalendar();
+  updateBadges();
+}
+
+function renderCalendar(){
+  const i=indicePercorso(currentMonth),d=dataMese(currentMonth),target=monthPlan()[i]??state.goal/state.months,savedM=monthSaved(currentMonth),mp=Math.min(100,target?savedM/target*100:0);
+  document.getElementById("calTitle").textContent=mesi[d.getMonth()]+" "+d.getFullYear();
+  document.getElementById("calSubtitle").textContent="Mese "+(i+1)+" di "+state.months+" · Il tuo percorso di risparmio";
+  document.getElementById("calGoal").textContent=euro(target);
+  document.getElementById("calSaved").textContent=euro(savedM)+" risparmiati";
+  document.getElementById("calPct").textContent=mp.toFixed(0)+"%";
+  document.getElementById("calBar").style.width=mp+"%";
+  const extra=extraFor(currentMonth),extraDone=!!state.extraDone[currentMonth];
+  document.getElementById("extraAmount").textContent="💎 "+euro(extra);
+  document.getElementById("extraButton").textContent=extraDone?"Rimuovi":"Aggiungi";
+  document.getElementById("prevMonth").disabled=currentMonth<=state.startMonth;
+  document.getElementById("nextMonth").disabled=i>=state.months-1;
+  const vals=monthChallenges(currentMonth);
+  document.getElementById("challengeGrid").innerHTML=vals.map((v,index)=>{
+    const done=state.done.some(x=>x.m===currentMonth&&x.i===index);
+    return `<button class="challenge ${done?"done":""}" onclick="toggleChallenge(${index},${v})">
+      <span class="step-label">Passo ${index+1}</span><span class="check">${done?"✓ Fatto":""}</span>
+      <div class="amount">${euro(v)}</div><div class="muted">${done?"Completato":"Tocca per segnare"}</div>
+    </button>`;
+  }).join("");
+}
+
+function toggleChallenge(i,v){
+  const idx=state.done.findIndex(x=>x.m===currentMonth&&x.i===i);
+  if(idx>=0){state.done.splice(idx,1);state.saved=Math.max(0,state.saved-v);}
+  else{state.done.push({m:currentMonth,i,v});state.saved+=v;}
+  save();
+}
+
+function toggleExtra(){
+  const value=extraFor(currentMonth);
+  if(state.extraDone[currentMonth]){
+    state.saved=Math.max(0,state.saved-value);
+    delete state.extraDone[currentMonth];
+  }else{
+    state.saved+=value;
+    state.extraDone[currentMonth]=true;
+  }
+  save();
+}
+
+function cambiaMese(dir){
+  const nuovo=currentMonth+dir;
+  const min=state.startMonth,max=state.startMonth+state.months-1;
+  if(nuovo<min||nuovo>max)return;
+  currentMonth=nuovo;
+  render();
+}
+
+function createPlan(){
+  const goal=Number(document.getElementById("goalInput").value)||1000;
+  const custom=Number(document.getElementById("durationInput").value)||0;
+  const selected=Number(document.querySelector("#durationChoices .selected")?.dataset.v)||12;
+  const months=custom>=1?Math.floor(custom):selected;
+  const method=document.querySelector("#methodChoices .selected")?.dataset.v||"variable";
+  const start=meseAssoluto();
+
+  state={goal,months,method,saved:0,done:[],extraDone:{},startMonth:start};
+  currentMonth=start;
+  localStorage.setItem(key,JSON.stringify(state));
+  render();
+  show("home");
+}
+
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.screen===id));
+  render();
+}
+
+function resetApp(){
+  if(confirm("Vuoi davvero ricominciare?")){
+    localStorage.removeItem(key);
+    localStorage.removeItem("mioSalvadanaioV1");
+    localStorage.removeItem("salvadanaioAvviato");
+    location.reload();
+  }
+}
+
+function iniziaSalvadanaio(){
+  localStorage.setItem("salvadanaioAvviato","true");
+  document.querySelector(".app").classList.add("started");
+  document.getElementById("welcome").classList.remove("active");
+  show("home");
+}
+
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>show(t.dataset.screen));
+document.querySelectorAll("#goalChoices .choice").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("#goalChoices .choice").forEach(x=>x.classList.remove("selected"));
+  b.classList.add("selected");
+  document.getElementById("goalInput").value=b.dataset.v;
+  updatePreview();
+});
+document.querySelectorAll("#durationChoices .choice").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("#durationChoices .choice").forEach(x=>x.classList.remove("selected"));
+  b.classList.add("selected");
+  document.getElementById("durationInput").value="";
+  updatePreview();
+});
+document.querySelectorAll("#methodChoices .method-option").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("#methodChoices .method-option").forEach(x=>x.classList.remove("selected"));
+  b.classList.add("selected");
+  updateMethod();
+});
+document.getElementById("goalInput").addEventListener("input",updatePreview);
+document.getElementById("durationInput").addEventListener("input",()=>{
+  document.querySelectorAll("#durationChoices .choice").forEach(x=>x.classList.remove("selected"));
+  updatePreview();
+});
+
+if(localStorage.getItem("salvadanaioAvviato")==="true"){
+  document.querySelector(".app").classList.add("started");
+  document.getElementById("welcome").classList.remove("active");
+  document.getElementById("home").classList.add("active");
+}
+if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(state));
+updateMethod();
+render();
+</script>
+</body>
+</html>
