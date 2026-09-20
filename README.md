@@ -1,1 +1,1 @@
-# -il-mio-salvadanaio
+# il-mio-salvadanaio
