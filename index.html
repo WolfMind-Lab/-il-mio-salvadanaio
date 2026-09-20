@@ -17,7 +17,7 @@ button{font-family:inherit;cursor:pointer}.app{max-width:480px;margin:auto;min-h
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.challenge{border:2px solid #eee;background:#fff;border-radius:16px;padding:15px;text-align:left}.challenge.done{border-color:var(--green);background:#eff9f1}.challenge .amount{font-size:22px;font-weight:800}.check{float:right;color:var(--green);font-weight:900}.step-label{display:block;margin-bottom:7px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .input{width:100%;padding:14px;border:1px solid #ddd;border-radius:14px;font-size:17px;margin:7px 0 14px;background:#fff}.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.choice{padding:12px;border:1px solid #ddd;border-radius:13px;background:#fff}.choice.selected{border:2px solid var(--gold);background:#fff8e8}.stat{flex:1;background:#fff;border-radius:17px;padding:14px}.stats{display:flex;gap:8px}.quote{background:var(--pink);border-radius:18px;padding:18px;text-align:center;font-family:Georgia,serif}
 .tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(480px,100%);background:#fff;border-top:1px solid #ddd;display:none;justify-content:space-around;padding:10px 4px calc(10px + env(safe-area-inset-bottom));z-index:10}.tab{border:0;background:none;color:var(--muted);font-size:11px}.tab.active{color:var(--navy);font-weight:800}.tab span{display:block;font-size:21px;margin-bottom:3px}
-.month-arrow{width:42px;height:42px;border:0;border-radius:50%;background:#fff;color:var(--navy);font-size:30px;line-height:1;box-shadow:0 3px 12px #14213d12}.month-arrow:disabled{opacity:.35;cursor:default}
+.month-arrow{width:42px;height:42px;border:0;border-radius:50%;background:#fff;color:var(--navy);font-size:30px;line-height:1;box-shadow:0 3px 12px #14213d12;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}.month-arrow:disabled{opacity:.35;cursor:default}
 .home-header{padding:22px 18px 4px;display:flex;justify-content:space-between;align-items:flex-start}.brand-small{font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--gold);margin-bottom:6px}.home-header h2{margin:0;font-size:26px;color:var(--navy)}.home-header p{margin:4px 0 0;color:var(--muted);font-size:13px}.home-menu{width:42px;height:42px;border:0;border-radius:50%;background:#fff;color:var(--navy);font-size:22px;box-shadow:0 4px 14px #14213d12}
 .home-goal-card{background:linear-gradient(145deg,#fffdf8,#fff4dd);border:1px solid #ead7ad;text-align:center;padding:24px 20px}.home-goal-card .label{color:#8b7651}.home-goal-value{font-family:Georgia,serif;font-size:38px;font-weight:800;color:var(--navy);margin:5px 0 10px}.home-goal-sub{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted);margin-bottom:9px}.home-goal-sub span:first-child{font-weight:800;color:var(--navy)}.home-progress{height:10px}
 .home-saved-card{display:flex;align-items:center;gap:15px;background:var(--navy);color:#fff;position:relative;overflow:hidden}.home-saved-card:after{content:"€";position:absolute;right:20px;bottom:-22px;font-family:Georgia,serif;font-size:105px;font-weight:900;color:#ffffff08}.saved-icon{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px}.home-saved-card .label{color:#cbd2df}.saved-value{font-size:29px;font-weight:800;margin:2px 0}.euro-coin{position:relative;overflow:hidden;background:radial-gradient(circle at 35% 30%,#fff6cf 0 10%,#e9c76d 28%,#b88625 62%,#f6dc91 78%,#b47d1d 100%)!important;border:3px solid #f8e2a0;box-shadow:inset 0 0 0 2px #9f6d16,inset 0 0 12px #fff3b8,0 5px 12px #0003;color:#8a6118;font-family:Georgia,serif;transform:rotate(-8deg)}.euro-coin span{display:block;font-size:30px;line-height:25px;font-weight:900;text-shadow:1px 1px 0 #fff4c5,-1px -1px 0 #8f651b}.euro-coin small{display:block;font-size:8px;font-weight:900;letter-spacing:.05em;margin-top:2px;text-shadow:0 1px 0 #fff2bd}
@@ -171,7 +171,75 @@ function nuovaState(){
   return {goal:1000,months:12,method:"variable",saved:0,done:[],extraDone:{},startMonth:start};
 }
 
-let state=JSON.parse(localStorage.getItem(key)||"null")||nuovaState();
+function migraStatoV1(){
+  const raw=localStorage.getItem("mioSalvadanaioV1");
+  if(!raw)return null;
+
+  try{
+    const old=JSON.parse(raw);
+    if(!old || typeof old!=="object")return null;
+
+    const now=new Date();
+    const anno=now.getFullYear();
+
+    // Il vecchio calendario usava 0-11; quello nuovo usa un indice assoluto.
+    const vecchioInizio=Number.isFinite(Number(old.startMonth))
+      ? Number(old.startMonth)
+      : now.getMonth();
+
+    const start=vecchioInizio>1000
+      ? vecchioInizio
+      : anno*12+vecchioInizio;
+
+    const done=Array.isArray(old.done)
+      ? old.done.map(x=>({
+          ...x,
+          m:Number(x.m)>1000
+            ? Number(x.m)
+            : anno*12+Number(x.m)
+        }))
+      : [];
+
+    let extraDone={};
+
+    if(old.extraDone && typeof old.extraDone==="object"){
+      Object.keys(old.extraDone).forEach(k=>{
+        const valore=Number(k);
+        if(!Number.isFinite(valore))return;
+
+        const mese=valore>1000
+          ? valore
+          : anno*12+valore;
+
+        if(old.extraDone[k])extraDone[mese]=true;
+      });
+    }
+
+    // Nel vecchio formato extraDone poteva essere un booleano.
+    if(old.extraDone===true){
+      extraDone[start]=true;
+    }
+
+    return {
+      goal:Number(old.goal)||1000,
+      months:Number(old.months)>=1?Math.floor(Number(old.months)):12,
+      method:old.method==="steady"?"steady":"variable",
+      saved:Math.max(0,Number(old.saved)||0),
+      done,
+      extraDone,
+      startMonth:start
+    };
+
+  }catch(e){
+    return null;
+  }
+}
+
+const v2Salvato=localStorage.getItem(key);
+let state=v2Salvato
+  ? JSON.parse(v2Salvato)
+  : (migraStatoV1() || nuovaState());
+
 let currentMonth=Number(state.startMonth);
 if(!Number.isFinite(currentMonth)) currentMonth=meseAssoluto();
 if(!Number.isFinite(state.months)||state.months<1) state.months=12;
