@@ -278,29 +278,45 @@ header{background:var(--navy);color:white;padding:24px 20px 26px;border-radius:0
         </div>
       </div>
 
-      <div class="choices duration-grid" id="durationChoices">
+  <div class="choices duration-grid" id="durationChoices">
 
-        <button class="choice" data-v="3">
-          <strong>3</strong>
-          <small>mesi</small>
-        </button>
+  <button class="choice" data-v="3">
+    <strong>3</strong>
+    <small>mesi</small>
+  </button>
 
-        <button class="choice" data-v="6">
-          <strong>6</strong>
-          <small>mesi</small>
-        </button>
+  <button class="choice" data-v="6">
+    <strong>6</strong>
+    <small>mesi</small>
+  </button>
 
-        <button class="choice selected" data-v="12">
-          <strong>12</strong>
-          <small>mesi</small>
-        </button>
+  <button class="choice selected" data-v="12">
+    <strong>12</strong>
+    <small>mesi</small>
+  </button>
 
-        <button class="choice" data-v="24">
-          <strong>24</strong>
-          <small>mesi</small>
-        </button>
+  <button class="choice" data-v="24">
+    <strong>24</strong>
+    <small>mesi</small>
+  </button>
 
-      </div>
+</div>
+
+<button
+  class="custom-duration"
+  onclick="document.getElementById('durationInput').focus()"
+>
+  ✏️ Durata personalizzata
+</button>
+
+<input
+  id="durationInput"
+  class="input"
+  type="number"
+  min="1"
+  step="1"
+  placeholder="Inserisci il numero di mesi"
+>
 
     </div>
 
@@ -536,7 +552,7 @@ aggiornaAnteprimaPercorso();
 </style>
 
 <script>
-/* --- NUOVO CALENDARIO --- */
+
 /* --- NUOVO CALENDARIO --- */
 
 const mesiSalvadanaio=[
@@ -1687,6 +1703,16 @@ if(localStorage.getItem("salvadanaioAvviato")==="true"){
   font-size:10px;
 }
 
+.custom-duration{
+  width:100%;
+  margin-top:9px;
+  padding:11px;
+  border:1px solid #d9b86d;
+  border-radius:13px;
+  background:#fffdf8;
+  color:var(--navy);
+  font-weight:700;
+}
 
 /* METODO */
 
