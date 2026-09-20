@@ -475,12 +475,21 @@ function createPlan(){
     document.querySelector("#methodChoices .selected")?.dataset.v
     || "variable";
 
+  const oggi = new Date();
+
   state.goal = goal;
   state.months = months;
   state.method = method;
   state.saved = 0;
   state.done = [];
   state.extraDone = {};
+
+  // Primo mese del nuovo percorso
+  state.startMonth =
+    oggi.getFullYear() * 12 + oggi.getMonth();
+
+  // Il calendario parte dal primo mese del nuovo percorso
+  currentMonth = state.startMonth;
 
   save();
   show("home");
