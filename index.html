@@ -138,5 +138,275 @@ document.querySelectorAll("#durationChoices .choice,#methodChoices .choice").for
 render();
 if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
+<style>
+.calendar-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.month-arrow{
+  width:42px;
+  height:42px;
+  border:0;
+  border-radius:50%;
+  background:white;
+  color:var(--navy);
+  font-size:30px;
+  line-height:1;
+  box-shadow:0 3px 12px #14213d12;
+}
+.month-arrow:active{
+  transform:scale(.96);
+}
+.step-label{
+  display:block;
+  margin-bottom:7px;
+  font-size:11px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+</style>
+
+<script>
+/* --- NUOVO CALENDARIO --- */
+
+const mesiSalvadanaio=[
+  "Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno",
+  "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"
+];
+
+if(typeof state.extraDone==="boolean"){
+  state.extraDone=state.extraDone
+    ? {[new Date().getMonth()]:true}
+    : {};
+}
+
+if(!state.extraDone || typeof state.extraDone!=="object"){
+  state.extraDone={};
+}
+
+if(state.startMonth===undefined){
+  state.startMonth=new Date().getMonth();
+}
+
+function indicePercorso(mese){
+  return ((mese-state.startMonth)%12+12)%12;
+}
+
+function nuovoExtra(mese){
+  const valori=[13,21,16,28,11,24,19,31,17,26,14,35];
+  return valori[indicePercorso(mese)%12];
+}
+
+function nuoveCaselle(mese){
+  const indice=indicePercorso(mese);
+  const piano=monthPlan();
+  const obiettivo=piano[indice%state.months] || state.goal/state.months;
+
+  const numeroCaselle=8;
+  const base=Math.floor(obiettivo/numeroCaselle);
+  let resto=Math.round(obiettivo)-base*numeroCaselle;
+
+  let valori=Array(numeroCaselle).fill(base);
+
+  for(let i=0;i<Math.abs(resto);i++){
+    valori[i%numeroCaselle]+=resto>0?1:-1;
+  }
+
+  return valori.filter(v=>v>0).map(v=>Math.round(v));
+}
+
+function renderNuovoCalendario(){
+
+  const goal=state.goal;
+  const saved=state.saved;
+  const percentuale=Math.min(100,saved/goal*100);
+
+  document.getElementById("goalText").textContent=euro(goal);
+  document.getElementById("goalBar").style.width=percentuale+"%";
+  document.getElementById("percent").textContent=percentuale.toFixed(1)+"%";
+
+  const rimanente=Math.max(0,goal-saved);
+
+  document.getElementById("remaining").textContent=
+    rimanente
+    ? "Ti mancano "+euro(rimanente)
+    : "Obiettivo raggiunto!";
+
+  const caselle=nuoveCaselle(currentMonth);
+  const extra=nuovoExtra(currentMonth);
+  const extraFatto=!!state.extraDone[currentMonth];
+
+  const risparmiMese=state.done
+    .filter(x=>x.m===currentMonth)
+    .reduce((tot,x)=>tot+x.v,0);
+
+  const risparmiTotaliMese=
+    risparmiMese+(extraFatto?extra:0);
+
+  const piano=monthPlan();
+  const obiettivoMese=
+    piano[indicePercorso(currentMonth)%state.months]
+    || goal/state.months;
+
+  const percentualeMese=
+    Math.min(100,risparmiTotaliMese/obiettivoMese*100);
+
+  /* HOME */
+
+  document.getElementById("monthGoal").textContent=
+    "Obiettivo "+euro(obiettivoMese);
+
+  document.getElementById("monthSaved").textContent=
+    euro(risparmiTotaliMese)+" / "+euro(obiettivoMese);
+
+  document.getElementById("monthBar").style.width=
+    percentualeMese+"%";
+
+  document.getElementById("extraHome").textContent=
+    "💎 Bonus Extra · "+euro(extra);
+
+  /* CALENDARIO */
+
+  document.getElementById("calTitle").textContent=
+    mesiSalvadanaio[currentMonth]+" "+new Date().getFullYear();
+
+  document.getElementById("calSubtitle").textContent=
+    "Il tuo percorso di risparmio";
+
+  document.getElementById("calGoal").textContent=
+    euro(obiettivoMese);
+
+  document.getElementById("calSaved").textContent=
+    euro(risparmiTotaliMese)+" risparmiati";
+
+  document.getElementById("calPct").textContent=
+    percentualeMese.toFixed(0)+"%";
+
+  document.getElementById("calBar").style.width=
+    percentualeMese+"%";
+
+  document.getElementById("extraAmount").textContent=
+    "💎 "+euro(extra);
+
+  document.querySelector("#calendar .gold").textContent=
+    extraFatto ? "Rimuovi" : "Aggiungi";
+
+  document.getElementById("challengeGrid").innerHTML=
+    caselle.map((valore,i)=>{
+
+      const fatto=state.done.some(
+        x=>x.m===currentMonth && x.i===i
+      );
+
+      return `
+        <button
+          class="challenge ${fatto?"done":""}"
+          onclick="toggleChallenge(${i},${valore})"
+        >
+          <span class="step-label">Passo ${i+1}</span>
+          <span class="check">${fatto?"✓ Fatto":""}</span>
+          <div class="amount">${euro(valore)}</div>
+          <div class="muted">
+            ${fatto?"Completato":"Tocca per segnare"}
+          </div>
+        </button>
+      `;
+
+    }).join("");
+
+  /* PROGRESSI */
+
+  document.getElementById("pSaved").textContent=euro(saved);
+  document.getElementById("pGoal").textContent=euro(goal);
+  document.getElementById("pPct").textContent=
+    percentuale.toFixed(1)+"%";
+  document.getElementById("pBar").style.width=
+    percentuale+"%";
+}
+
+
+/* CAMBIO MESE */
+
+function cambiaMese(direzione){
+
+  const nuovo=
+    currentMonth+direzione;
+
+  if(nuovo<0 || nuovo>11) return;
+
+  currentMonth=nuovo;
+
+  renderNuovoCalendario();
+}
+
+
+/* BONUS EXTRA */
+
+function nuovoToggleExtra(){
+
+  const valore=nuovoExtra(currentMonth);
+
+  if(state.extraDone[currentMonth]){
+
+    state.saved-=valore;
+    delete state.extraDone[currentMonth];
+
+  }else{
+
+    state.saved+=valore;
+    state.extraDone[currentMonth]=true;
+
+  }
+
+  localStorage.setItem(key,JSON.stringify(state));
+
+  renderNuovoCalendario();
+}
+
+
+/* SOSTITUISCE LE FUNZIONI PRECEDENTI */
+
+toggleExtra=nuovoToggleExtra;
+render=renderNuovoCalendario;
+
+
+/* AGGIUNGE LE FRECCE AL CALENDARIO */
+
+const titoloCalendario=document.getElementById("calTitle");
+
+if(titoloCalendario){
+
+  const intestazione=titoloCalendario.parentElement;
+
+  intestazione.parentElement.innerHTML=`
+    <button
+      class="month-arrow"
+      onclick="cambiaMese(-1)"
+      aria-label="Mese precedente"
+    >‹</button>
+
+    <div style="text-align:center">
+      <h2 id="calTitle"></h2>
+      <p id="calSubtitle"></p>
+    </div>
+
+    <button
+      class="month-arrow"
+      onclick="cambiaMese(1)"
+      aria-label="Mese successivo"
+    >›</button>
+  `;
+
+}
+
+
+/* AGGIORNA LA SCHERMATA */
+
+renderNuovoCalendario();
+
+</script>
 </body>
 </html>
