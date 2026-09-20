@@ -408,5 +408,254 @@ if(titoloCalendario){
 renderNuovoCalendario();
 
 </script>
+<style>
+/* --- TRAGUARDI E BADGE --- */
+
+.badges-card{
+  background:linear-gradient(145deg,#fffdf8,#fff7e5);
+}
+
+.badges-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-top:14px;
+}
+
+.badge-item{
+  background:white;
+  border:2px solid #eee;
+  border-radius:18px;
+  padding:15px 10px;
+  text-align:center;
+  transition:.2s;
+}
+
+.badge-item.unlocked{
+  border-color:var(--gold);
+  background:#fffaf0;
+  box-shadow:0 4px 14px #d9a44120;
+}
+
+.badge-icon{
+  font-size:32px;
+  margin-bottom:7px;
+  filter:grayscale(1);
+  opacity:.35;
+}
+
+.badge-item.unlocked .badge-icon{
+  filter:none;
+  opacity:1;
+}
+
+.badge-name{
+  font-weight:800;
+  font-size:14px;
+}
+
+.badge-desc{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:4px;
+  line-height:1.3;
+}
+
+.badge-status{
+  margin-top:7px;
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:#999;
+}
+
+.badge-item.unlocked .badge-status{
+  color:var(--gold);
+}
+
+.traguardo-box{
+  margin-top:14px;
+  background:var(--navy);
+  color:white;
+  border-radius:18px;
+  padding:16px;
+}
+
+.traguardo-box .label{
+  color:#dfe4ef;
+}
+
+.traguardo-progress{
+  height:8px;
+  background:#ffffff25;
+  border-radius:99px;
+  overflow:hidden;
+  margin-top:10px;
+}
+
+.traguardo-progress div{
+  height:100%;
+  background:var(--gold);
+  border-radius:99px;
+}
+
+.traguardo-text{
+  margin-top:8px;
+  font-size:13px;
+  color:#e7eaf1;
+}
+</style>
+
+<script>
+/* --- SISTEMA TRAGUARDI --- */
+
+function aggiornaTraguardi(){
+
+  const cardProgress=document.querySelector("#progress .card:nth-of-type(3)");
+
+  if(!cardProgress) return;
+
+  let cardBadge=document.getElementById("badgesCard");
+
+  if(!cardBadge){
+
+    cardBadge=document.createElement("div");
+
+    cardBadge.id="badgesCard";
+    cardBadge.className="card badges-card";
+
+    cardProgress.insertAdjacentElement("afterend",cardBadge);
+
+  }
+
+  const goal=Number(state.goal)||1000;
+  const saved=Math.max(0,Number(state.saved)||0);
+  const percent=Math.min(100,saved/goal*100);
+
+  const primoPasso=state.done.length>0;
+  const cento=saved>=100;
+  const venticinque=percent>=25;
+  const cinquanta=percent>=50;
+  const settantacinque=percent>=75;
+  const obiettivo=saved>=goal;
+
+  const badge=[
+    {
+      icon:"🌱",
+      name:"Primo passo",
+      desc:"Completa la tua prima casella.",
+      unlocked:primoPasso
+    },
+    {
+      icon:"⭐",
+      name:"Primi €100",
+      desc:"Metti da parte almeno €100.",
+      unlocked:cento
+    },
+    {
+      icon:"🌙",
+      name:"Un quarto del cammino",
+      desc:"Raggiungi il 25% del tuo obiettivo.",
+      unlocked:venticinque
+    },
+    {
+      icon:"✨",
+      name:"Metà strada",
+      desc:"Raggiungi il 50% del tuo obiettivo.",
+      unlocked:cinquanta
+    },
+    {
+      icon:"💎",
+      name:"Quasi arrivata",
+      desc:"Raggiungi il 75% del tuo obiettivo.",
+      unlocked:settantacinque
+    },
+    {
+      icon:"🏆",
+      name:"Obiettivo raggiunto",
+      desc:"Completa il tuo salvadanaio.",
+      unlocked:obiettivo
+    }
+  ];
+
+  cardBadge.innerHTML=`
+    <div class="label">I miei traguardi</div>
+    <h3 style="margin:5px 0 0">🏆 Piccoli passi, grandi conquiste</h3>
+
+    <div class="badges-grid">
+
+      ${badge.map(b=>`
+        <div class="badge-item ${b.unlocked?"unlocked":""}">
+
+          <div class="badge-icon">${b.icon}</div>
+
+          <div class="badge-name">
+            ${b.name}
+          </div>
+
+          <div class="badge-desc">
+            ${b.desc}
+          </div>
+
+          <div class="badge-status">
+            ${b.unlocked?"✓ Sbloccato":"🔒 Da sbloccare"}
+          </div>
+
+        </div>
+      `).join("")}
+
+    </div>
+
+    <div class="traguardo-box">
+
+      <div class="label">
+        PROSSIMO TRAGUARDO
+      </div>
+
+      <b>
+        ${
+          obiettivo
+          ? "🎉 Hai completato il tuo salvadanaio!"
+          : cinquanta
+            ? "💎 Ti aspetta il 75%"
+            : venticinque
+              ? "✨ Il prossimo passo è il 50%"
+              : "🌙 Il primo traguardo è il 25%"
+        }
+      </b>
+
+      <div class="traguardo-progress">
+        <div style="width:${percent}%"></div>
+      </div>
+
+      <div class="traguardo-text">
+        ${euro(saved)} di ${euro(goal)} · ${percent.toFixed(1)}%
+      </div>
+
+    </div>
+  `;
+
+}
+
+
+/* Aggiorniamo i badge ogni volta che cambia il risparmio */
+
+const renderOriginaleBadge=render;
+
+render=function(){
+
+  renderOriginaleBadge();
+
+  aggiornaTraguardi();
+
+};
+
+
+/* Prima visualizzazione */
+
+aggiornaTraguardi();
+
+</script>
 </body>
 </html>
