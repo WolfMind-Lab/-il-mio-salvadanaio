@@ -21,10 +21,45 @@ header{background:var(--navy);color:white;padding:24px 20px 26px;border-radius:0
 </head>
 <body>
 <div class="app">
-<header>
-  <div class="brand">✦ IL MIO SALVADANAIO</div>
-  <div class="hero"><div class="moon">🌙</div><h1>Piccoli passi,<br>grandi sogni.</h1><p>Il tuo risparmio, un passo alla volta.</p></div>
-</header>
+<section id="welcome" class="screen welcome-screen active">
+
+  <div class="welcome-brand">
+    ✦ IL MIO SALVADANAIO
+  </div>
+
+  <div class="welcome-content">
+
+    <div class="welcome-moon">🌙</div>
+
+    <div class="welcome-pig">
+      🐷
+      <span>♛</span>
+    </div>
+
+    <h1>
+      Piccoli passi,<br>
+      grandi sogni.
+    </h1>
+
+    <p>
+      Il tuo risparmio,<br>
+      un passo alla volta.
+    </p>
+
+    <button
+      class="btn gold welcome-button"
+      onclick="iniziaSalvadanaio()"
+    >
+      Inizia
+    </button>
+
+  </div>
+
+  <div class="welcome-stars">
+    ✦　⋆　✦　　⋆　✦
+  </div>
+
+</section>
 
 <section id="home" class="screen active">
 
@@ -1120,6 +1155,171 @@ render = function(){
 };
 
 render();
+</script>
+<style>
+/* =========================
+   SCHERMATA INIZIALE
+   ========================= */
+
+.welcome-screen{
+  min-height:calc(100vh - 20px);
+  background:var(--navy);
+  color:white;
+  border-radius:0 0 32px 32px;
+  padding:28px 22px 30px;
+  position:relative;
+  overflow:hidden;
+  text-align:center;
+}
+
+.welcome-screen:before{
+  content:"";
+  position:absolute;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  background:#ffffff06;
+  top:-100px;
+  right:-90px;
+}
+
+.welcome-screen:after{
+  content:"";
+  position:absolute;
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  background:#d9a44108;
+  bottom:-100px;
+  left:-80px;
+}
+
+.welcome-brand{
+  position:relative;
+  z-index:2;
+  text-align:left;
+  font-size:14px;
+  font-weight:800;
+  letter-spacing:.08em;
+}
+
+.welcome-content{
+  position:relative;
+  z-index:2;
+  min-height:calc(100vh - 150px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+.welcome-moon{
+  font-size:48px;
+  margin-bottom:2px;
+  filter:drop-shadow(0 5px 12px #d9a44155);
+}
+
+.welcome-pig{
+  position:relative;
+  font-size:94px;
+  line-height:1;
+  margin:8px 0 18px;
+  filter:drop-shadow(0 10px 14px #0005);
+}
+
+.welcome-pig span{
+  position:absolute;
+  top:-8px;
+  left:50%;
+  transform:translateX(-50%) rotate(-5deg);
+  font-size:35px;
+  color:var(--gold);
+  text-shadow:0 2px 4px #0006;
+}
+
+.welcome-content h1{
+  font-family:Georgia,serif;
+  font-size:38px;
+  line-height:1.08;
+  margin:0;
+  color:white;
+}
+
+.welcome-content p{
+  margin:15px 0 24px;
+  font-size:16px;
+  line-height:1.5;
+  color:#e4e7ef;
+}
+
+.welcome-button{
+  width:min(300px,90%);
+  padding:16px;
+  border-radius:18px;
+  font-size:17px;
+  box-shadow:0 8px 20px #0003;
+}
+
+.welcome-stars{
+  position:absolute;
+  z-index:2;
+  bottom:22px;
+  left:0;
+  width:100%;
+  color:#f5d77d;
+  font-size:16px;
+  opacity:.85;
+}
+
+
+/* ALL'INIZIO L'APP MOSTRA SOLO IL BENVENUTO */
+
+#home{
+  display:none;
+}
+
+.tabs{
+  display:none;
+}
+
+.app.started #home.screen.active{
+  display:block;
+}
+
+.app.started .tabs{
+  display:flex;
+}
+
+.app.started #welcome{
+  display:none;
+}
+</style>
+
+<script>
+/* =========================
+   AVVIO DEL SALVADANAIO
+   ========================= */
+
+function iniziaSalvadanaio(){
+
+  const app=document.querySelector(".app");
+  const welcome=document.getElementById("welcome");
+  const home=document.getElementById("home");
+
+  app.classList.add("started");
+
+  welcome.classList.remove("active");
+  home.classList.add("active");
+
+  document.querySelectorAll(".tab").forEach(t=>{
+    t.classList.toggle(
+      "active",
+      t.dataset.screen==="home"
+    );
+  });
+
+  render();
+}
 </script>
 </body>
 </html>
