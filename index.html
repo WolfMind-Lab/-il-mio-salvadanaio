@@ -324,12 +324,12 @@ header{background:var(--navy);color:white;padding:24px 20px 26px;border-radius:0
     <div class="create-section">
 
       <div class="create-title">
-        <span>🎲</span>
-        <div>
-          <b>Come vuoi risparmiare?</b>
-          <small>Scegli il ritmo che preferisci.</small>
-        </div>
-      </div>
+  <span id="methodTitleIcon">🎲</span>
+  <div>
+    <b>Come vuoi risparmiare?</b>
+    <small id="methodTitleDescription">Scegli il ritmo che preferisci.</small>
+  </div>
+</div>
 
       <div class="method-list" id="methodChoices">
 
@@ -512,8 +512,42 @@ document.querySelectorAll("#methodChoices .method-option").forEach(b=>{
       .forEach(x=>x.classList.remove("selected"));
 
     b.classList.add("selected");
+
+    aggiornaMetodo();
   };
 });
+
+function aggiornaMetodo(){
+  const metodo =
+    document.querySelector("#methodChoices .selected")?.dataset.v
+    || "variable";
+
+  const icon = document.getElementById("methodTitleIcon");
+  const description = document.getElementById("methodTitleDescription");
+  const previewText = document.querySelector(".preview-text");
+
+  if(metodo === "steady"){
+    icon.textContent = "📌";
+    description.textContent =
+      "Un ritmo semplice e prevedibile.";
+
+    if(previewText){
+      previewText.innerHTML =
+        'Ogni mese metterai da parte circa <b id="previewMonthly"></b>, con un importo costante.';
+    }
+  }else{
+    icon.textContent = "🎲";
+    description.textContent =
+      "Ogni mese una sfida diversa.";
+
+    if(previewText){
+      previewText.innerHTML =
+        'Circa <b id="previewMonthly"></b> al mese, con importi pensati per il tuo percorso.';
+    }
+  }
+
+  aggiornaAnteprimaPercorso();
+}
 
 
 document.querySelectorAll("#goalChoices .choice").forEach(b=>{
