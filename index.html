@@ -585,8 +585,11 @@ function aggiornaAnteprimaPercorso(){
   document.getElementById("previewMonths").textContent =
     months + " " + (months === 1 ? "mese" : "mesi");
 
-  document.getElementById("previewMonthly").textContent =
-    euro(goal / months);
+  const monthly = document.getElementById("previewMonthly");
+
+if(monthly){
+  monthly.textContent = euro(goal / months);
+}
 }
 
 document.getElementById("goalInput")?.addEventListener("input",()=>{
@@ -600,6 +603,7 @@ document.getElementById("durationInput")?.addEventListener("input",()=>{
 });
 
 aggiornaAnteprimaPercorso();
+aggiornaMetodo();
 </script>
 
 <style>
