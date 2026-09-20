@@ -455,6 +455,7 @@ function render(){
 function toggleChallenge(i,v){let idx=state.done.findIndex(x=>x.m===currentMonth&&x.i===i); if(idx>=0){state.done.splice(idx,1);state.saved-=v}else{state.done.push({m:currentMonth,i,v});state.saved+=v} save()}
 function toggleExtra(){if(state.extraDone){state.saved-=extraFor(currentMonth);state.extraDone=false}else{state.saved+=extraFor(currentMonth);state.extraDone=true} save()}
 function createPlan(){
+
   const goal =
     Number(document.getElementById("goalInput").value) || 1000;
 
@@ -477,21 +478,35 @@ function createPlan(){
 
   const oggi = new Date();
 
+  // Nuovo piano completamente pulito
   state.goal = goal;
   state.months = months;
   state.method = method;
+
+  // Azzera tutti i risparmi precedenti
   state.saved = 0;
   state.done = [];
+
+  // Nessun Bonus Extra ancora aggiunto
   state.extraDone = {};
 
   // Primo mese del nuovo percorso
   state.startMonth =
     oggi.getFullYear() * 12 + oggi.getMonth();
 
-  // Il calendario parte dal primo mese del nuovo percorso
+  // Partiamo immediatamente dal primo mese
   currentMonth = state.startMonth;
 
-  save();
+  // Salva il nuovo piano
+  localStorage.setItem(
+    key,
+    JSON.stringify(state)
+  );
+
+  // Aggiorna immediatamente tutto
+  renderNuovoCalendario();
+
+  // Vai direttamente alla Home
   show("home");
 }
 function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.screen===id));render()}
@@ -927,30 +942,35 @@ function cambiaMese(direzione){
 
 function nuovoToggleExtra(){
 
-  const valore=
-    nuovoExtra(currentMonth);
+  const valore = nuovoExtra(currentMonth);
 
+  // Se il bonus è già presente → lo rimuoviamo
   if(state.extraDone[currentMonth]){
 
-    state.saved-=valore;
+    state.saved = Math.max(
+      0,
+      state.saved - valore
+    );
 
     delete state.extraDone[currentMonth];
 
   }else{
 
-    state.saved+=valore;
+    // Se non è presente → lo aggiungiamo
+    state.saved += valore;
 
-    state.extraDone[currentMonth]=true;
+    state.extraDone[currentMonth] = true;
   }
 
+  // Salva
   localStorage.setItem(
     key,
     JSON.stringify(state)
   );
 
+  // Aggiorna immediatamente calendario + Home
   renderNuovoCalendario();
 }
-
 toggleExtra=nuovoToggleExtra;
 render=renderNuovoCalendario;
 
