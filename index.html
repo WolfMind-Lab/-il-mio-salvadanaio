@@ -290,7 +290,13 @@ function toggleChallenge(i,v){let idx=state.done.findIndex(x=>x.m===currentMonth
 function toggleExtra(){if(state.extraDone){state.saved-=extraFor(currentMonth);state.extraDone=false}else{state.saved+=extraFor(currentMonth);state.extraDone=true} save()}
 function createPlan(){state.goal=Number(document.getElementById("goalInput").value)||1000; state.months=Number(document.querySelector("#durationChoices .selected")?.dataset.v||12); state.method=document.querySelector("#methodChoices .selected")?.dataset.v||"variable"; state.saved=0;state.done=[];state.extraDone=false;save();show("home")}
 function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.screen===id));render()}
-function resetApp(){if(confirm("Vuoi davvero ricominciare?")){localStorage.removeItem(key);location.reload()}}
+function resetApp(){
+  if(confirm("Vuoi davvero ricominciare?")){
+    localStorage.removeItem(key);
+    localStorage.removeItem("salvadanaioAvviato");
+    location.reload();
+  }
+}
 document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>show(t.dataset.screen));
 document.querySelectorAll("#goalChoices .choice").forEach(b=>b.onclick=()=>{document.querySelectorAll("#goalChoices .choice").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");document.getElementById("goalInput").value=b.dataset.v});
 document.querySelectorAll("#durationChoices .choice,#methodChoices .choice").forEach(b=>b.onclick=()=>{let p=b.parentElement;p.querySelectorAll(".choice").forEach(x=>x.classList.remove("selected"));b.classList.add("selected")});
@@ -1306,6 +1312,8 @@ function iniziaSalvadanaio(){
   const welcome=document.getElementById("welcome");
   const home=document.getElementById("home");
 
+  localStorage.setItem("salvadanaioAvviato","true");
+
   app.classList.add("started");
 
   welcome.classList.remove("active");
@@ -1319,6 +1327,28 @@ function iniziaSalvadanaio(){
   });
 
   render();
+}
+
+
+/* --- RICORDA L'AVVIO DELL'APP --- */
+
+if(localStorage.getItem("salvadanaioAvviato")==="true"){
+
+  const app=document.querySelector(".app");
+  const welcome=document.getElementById("welcome");
+  const home=document.getElementById("home");
+
+  app.classList.add("started");
+
+  welcome.classList.remove("active");
+  home.classList.add("active");
+
+  document.querySelectorAll(".tab").forEach(t=>{
+    t.classList.toggle(
+      "active",
+      t.dataset.screen==="home"
+    );
+  });
 }
 </script>
 </body>
