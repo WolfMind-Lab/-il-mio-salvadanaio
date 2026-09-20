@@ -1,0 +1,10 @@
+{
+  "name": "Il mio Salvadanaio",
+  "short_name": "Salvadanaio",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#fff8ec",
+  "theme_color": "#14213d",
+  "lang": "it",
+  "icons": []
+}

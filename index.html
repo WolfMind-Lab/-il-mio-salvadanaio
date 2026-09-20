@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#14213d">
+<title>Il mio Salvadanaio</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root{--navy:#14213d;--cream:#fff8ec;--gold:#d9a441;--pink:#f6d7d7;--ink:#202637;--green:#55a66a;--muted:#73798a}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--cream);color:var(--ink)}
+.app{max-width:480px;margin:auto;min-height:100vh;background:var(--cream);padding-bottom:82px}
+header{background:var(--navy);color:white;padding:24px 20px 26px;border-radius:0 0 28px 28px}
+.brand{font-weight:800;letter-spacing:.08em;font-size:14px}.hero{text-align:center;padding:28px 12px 8px}.moon{font-size:38px}.hero h1{font-family:Georgia,serif;font-size:32px;margin:8px 0}.hero p{opacity:.85;margin:0}
+.card{background:white;border-radius:22px;margin:16px;padding:18px;box-shadow:0 5px 20px #14213d12}.label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.big{font-size:34px;font-weight:800;margin:4px 0 10px}.progress{height:12px;background:#eee;border-radius:99px;overflow:hidden}.bar{height:100%;background:var(--gold);border-radius:99px}.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.btn{border:0;border-radius:15px;padding:13px 16px;font-weight:700;font-size:15px;cursor:pointer}.primary{background:var(--navy);color:white}.gold{background:var(--gold);color:#172033}.ghost{background:#f2eee6;color:var(--navy)}.month{background:linear-gradient(135deg,#fff,#fff5e3)}
+.tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(480px,100%);background:white;border-top:1px solid #ddd;display:flex;justify-content:space-around;padding:10px 4px calc(10px + env(safe-area-inset-bottom));z-index:10}.tab{border:0;background:none;color:var(--muted);font-size:11px}.tab.active{color:var(--navy);font-weight:800}.tab span{display:block;font-size:21px;margin-bottom:3px}
+.screen{display:none}.screen.active{display:block}.top{padding:22px 18px 4px}.top h2{margin:0 0 4px}.top p{margin:0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.challenge{border:2px solid #eee;background:white;border-radius:16px;padding:15px;text-align:left;cursor:pointer}.challenge.done{border-color:var(--green);background:#eff9f1}.challenge .amount{font-size:22px;font-weight:800}.check{float:right;color:var(--green);font-weight:900}
+.input{width:100%;padding:14px;border:1px solid #ddd;border-radius:14px;font-size:17px;margin:7px 0 14px;background:white}.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.choice{padding:12px;border:1px solid #ddd;border-radius:13px;background:white}.choice.selected{border:2px solid var(--gold);background:#fff8e8}.stat{flex:1;background:#fff;border-radius:17px;padding:14px}.stats{display:flex;gap:8px}.muted{color:var(--muted);font-size:13px}.quote{background:var(--pink);border-radius:18px;padding:18px;text-align:center;font-family:Georgia,serif}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand">✦ IL MIO SALVADANAIO</div>
+  <div class="hero"><div class="moon">🌙</div><h1>Piccoli passi,<br>grandi sogni.</h1><p>Il tuo risparmio, un passo alla volta.</p></div>
+</header>
+
+<section id="home" class="screen active">
+  <div class="card">
+    <div class="label">Il mio obiettivo</div>
+    <div class="big" id="goalText">€1.000,00</div>
+    <div class="progress"><div class="bar" id="goalBar" style="width:0%"></div></div>
+    <div class="row muted" style="margin-top:8px"><span id="percent">0%</span><span id="remaining">Ti mancano €1.000,00</span></div>
+  </div>
+  <div class="card month">
+    <div class="row"><div><div class="label" id="monthName">Questo mese</div><b id="monthGoal">Obiettivo €83,33</b></div><span>📅</span></div>
+    <div style="margin:14px 0"><div class="progress"><div class="bar" id="monthBar" style="width:0%"></div></div></div>
+    <div class="row"><span id="monthSaved">€0 / €83,33</span><button class="btn primary" onclick="show('calendar')">Continua</button></div>
+  </div>
+  <div class="card">
+    <div class="row"><div><div class="label">Il tuo lusso</div><b id="extraHome">💎 Bonus Extra · €17</b></div><span>✨</span></div>
+  </div>
+  <div class="card quote">“Ogni euro messo da parte è una possibilità in più per domani.”</div>
+</section>
+
+<section id="create" class="screen">
+  <div class="top"><h2>Crea il mio salvadanaio</h2><p>Personalizza il tuo percorso.</p></div>
+  <div class="card">
+    <div class="label">Obiettivo</div>
+    <input id="goalInput" class="input" type="number" min="1" value="1000" step="10">
+    <div class="choices" id="goalChoices">
+      <button class="choice" data-v="250">€250</button><button class="choice" data-v="500">€500</button>
+      <button class="choice selected" data-v="1000">€1.000</button><button class="choice" data-v="2000">€2.000</button>
+    </div>
+    <div class="label" style="margin-top:20px">Durata</div>
+    <div class="choices" id="durationChoices">
+      <button class="choice" data-v="3">3 mesi</button><button class="choice" data-v="6">6 mesi</button>
+      <button class="choice selected" data-v="12">12 mesi</button><button class="choice" data-v="24">24 mesi</button>
+    </div>
+    <div class="label" style="margin-top:20px">Metodo</div>
+    <div class="choices" id="methodChoices">
+      <button class="choice selected" data-v="variable">🎲 Importi variabili</button><button class="choice" data-v="steady">📌 Regolare</button>
+    </div>
+    <button class="btn primary" style="width:100%;margin-top:18px" onclick="createPlan()">✨ Crea il mio salvadanaio</button>
+  </div>
+</section>
+
+<section id="calendar" class="screen">
+  <div class="top row"><div><h2 id="calTitle">Settembre</h2><p id="calSubtitle">Il tuo percorso di questo mese</p></div><span style="font-size:28px">🌙</span></div>
+  <div class="card">
+    <div class="row"><div><div class="label">Obiettivo del mese</div><div class="big" id="calGoal">€83,33</div></div><div style="text-align:right"><b id="calPct">0%</b><div class="muted" id="calSaved">€0 risparmiati</div></div></div>
+    <div class="progress"><div class="bar" id="calBar" style="width:0%"></div></div>
+  </div>
+  <div class="card"><div class="label" style="margin-bottom:10px">Caselle del mese</div><div class="grid" id="challengeGrid"></div></div>
+  <div class="card" style="background:#fdf2d8"><div class="row"><div><div class="label">Bonus Extra</div><b id="extraAmount">💎 €17</b><div class="muted">Il tuo piccolo lusso del mese</div></div><button class="btn gold" onclick="toggleExtra()">Aggiungi</button></div></div>
+</section>
+
+<section id="progress" class="screen">
+  <div class="top"><h2>I miei progressi</h2><p>Guarda quanto hai costruito.</p></div>
+  <div class="card stats"><div class="stat"><div class="label">Risparmiato</div><b id="pSaved">€0</b></div><div class="stat"><div class="label">Obiettivo</div><b id="pGoal">€1.000</b></div></div>
+  <div class="card"><div class="label">Avanzamento</div><div style="font-size:50px;font-weight:800;text-align:center;margin:15px" id="pPct">0%</div><div class="progress"><div class="bar" id="pBar" style="width:0%"></div></div></div>
+  <div class="card"><h3>🏆 Traguardi</h3><p>🌱 Primo passo — completa la prima casella.</p><p>⭐ €100 — raggiungi i primi €100.</p><p>💎 Obiettivo — completa il tuo salvadanaio.</p></div>
+</section>
+
+<section id="profile" class="screen">
+  <div class="top"><h2>Il mio profilo</h2><p>Le tue preferenze.</p></div>
+  <div class="card"><div class="row"><span>👤 Nome</span><b>Il mio Salvadanaio</b></div><hr><div class="row"><span>🌙 Tema</span><b>Celestiale</b></div><hr><div class="row"><span>🔔 Promemoria</span><button class="btn ghost" onclick="alert('Nel prototipo i promemoria sono disattivati.')">Gestisci</button></div><hr><div class="row"><span>🗑️ Ricomincia</span><button class="btn ghost" onclick="resetApp()">Reset</button></div></div>
+</section>
+
+<nav class="tabs">
+ <button class="tab active" data-screen="home"><span>🏠</span>Home</button>
+ <button class="tab" data-screen="calendar"><span>📅</span>Calendario</button>
+ <button class="tab" data-screen="create"><span>💰</span>Salvadanaio</button>
+ <button class="tab" data-screen="progress"><span>📊</span>Progressi</button>
+ <button class="tab" data-screen="profile"><span>👤</span>Profilo</button>
+</nav>
+</div>
+<script>
+const key="mioSalvadanaioV1";
+let state=JSON.parse(localStorage.getItem(key)||"null")||{goal:1000,months:12,method:"variable",saved:0,done:[],extraDone:false,extra:17};
+let currentMonth=new Date().getMonth();
+const euro=n=>new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"}).format(n);
+function save(){localStorage.setItem(key,JSON.stringify(state));render()}
+function monthPlan(){
+ const avg=state.goal/state.months;
+ let vals=[]; for(let i=0;i<state.months;i++){let wiggle=state.method==="variable" ? Math.sin(i*2.17)*avg*.22 : 0; vals.push(Math.max(1,avg+wiggle))}
+ const sum=vals.reduce((a,b)=>a+b,0); return vals.map(v=>v*state.goal/sum)
+}
+function monthChallenges(m){
+ const target=monthPlan()[m%state.months]||state.goal/state.months;
+ const n=8, base=Math.floor(target/n);
+ let vals=Array(n).fill(base); let rem=Math.round(target)-base*n;
+ for(let i=0;i<Math.abs(rem);i++) vals[i%n]+=rem>0?1:-1;
+ return vals.filter(v=>v>0).map(v=>Math.round(v));
+}
+function extraFor(m){let arr=[13,21,16,28,11,24,19,31,17,26,14,35]; return arr[m%12]}
+function monthDoneValues(){return monthChallenges(currentMonth)}
+function render(){
+ const goal=state.goal, saved=state.saved, pct=Math.min(100,saved/goal*100), rem=Math.max(0,goal-saved);
+ document.getElementById("goalText").textContent=euro(goal); document.getElementById("goalBar").style.width=pct+"%"; document.getElementById("percent").textContent=pct.toFixed(1)+"%"; document.getElementById("remaining").textContent=rem?`Ti mancano ${euro(rem)}`:"Obiettivo raggiunto!";
+ const vals=monthDoneValues(), target=vals.reduce((a,b)=>a+b,0)+(state.extraDone?0:0); const done=state.done.filter(x=>x.m===currentMonth).reduce((a,x)=>a+x.v,0)+(state.extraDone?extraFor(currentMonth):0);
+ const monthTarget=monthPlan()[currentMonth%state.months]||goal/state.months;
+ document.getElementById("monthGoal").textContent="Obiettivo "+euro(monthTarget); document.getElementById("monthSaved").textContent=`${euro(done)} / ${euro(monthTarget)}`; document.getElementById("monthBar").style.width=Math.min(100,done/monthTarget*100)+"%";
+ document.getElementById("extraHome").textContent="💎 Bonus Extra · "+euro(extraFor(currentMonth));
+ document.getElementById("calGoal").textContent=euro(monthTarget); document.getElementById("calSaved").textContent=euro(done)+" risparmiati"; document.getElementById("calPct").textContent=Math.min(100,done/monthTarget*100).toFixed(0)+"%"; document.getElementById("calBar").style.width=Math.min(100,done/monthTarget*100)+"%"; document.getElementById("extraAmount").textContent="💎 "+euro(extraFor(currentMonth));
+ document.getElementById("challengeGrid").innerHTML=vals.map((v,i)=>{let d=state.done.some(x=>x.m===currentMonth&&x.i===i);return `<button class="challenge ${d?'done':''}" onclick="toggleChallenge(${i},${v})"><span>${d?'✓':'○'}</span><span class="check">${d?'Fatto':''}</span><div class="amount">${euro(v)}</div><div class="muted">${d?'Completato':'Tocca per segnare'}</div></button>`}).join("");
+ document.getElementById("pSaved").textContent=euro(saved); document.getElementById("pGoal").textContent=euro(goal); document.getElementById("pPct").textContent=pct.toFixed(1)+"%"; document.getElementById("pBar").style.width=pct+"%";
+}
+function toggleChallenge(i,v){let idx=state.done.findIndex(x=>x.m===currentMonth&&x.i===i); if(idx>=0){state.done.splice(idx,1);state.saved-=v}else{state.done.push({m:currentMonth,i,v});state.saved+=v} save()}
+function toggleExtra(){if(state.extraDone){state.saved-=extraFor(currentMonth);state.extraDone=false}else{state.saved+=extraFor(currentMonth);state.extraDone=true} save()}
+function createPlan(){state.goal=Number(document.getElementById("goalInput").value)||1000; state.months=Number(document.querySelector("#durationChoices .selected")?.dataset.v||12); state.method=document.querySelector("#methodChoices .selected")?.dataset.v||"variable"; state.saved=0;state.done=[];state.extraDone=false;save();show("home")}
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.screen===id));render()}
+function resetApp(){if(confirm("Vuoi davvero ricominciare?")){localStorage.removeItem(key);location.reload()}}
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>show(t.dataset.screen));
+document.querySelectorAll("#goalChoices .choice").forEach(b=>b.onclick=()=>{document.querySelectorAll("#goalChoices .choice").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");document.getElementById("goalInput").value=b.dataset.v});
+document.querySelectorAll("#durationChoices .choice,#methodChoices .choice").forEach(b=>b.onclick=()=>{let p=b.parentElement;p.querySelectorAll(".choice").forEach(x=>x.classList.remove("selected"));b.classList.add("selected")});
+render();
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
