@@ -449,17 +449,68 @@ function resetApp(){
 }
 document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>show(t.dataset.screen));
 document.querySelectorAll("#goalChoices .choice").forEach(b=>b.onclick=()=>{document.querySelectorAll("#goalChoices .choice").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");document.getElementById("goalInput").value=b.dataset.v});
-document.querySelectorAll("#durationChoices .choice,#methodChoices .choice").forEach(b=>b.onclick=()=>{let p=b.parentElement;p.querySelectorAll(".choice").forEach(x=>x.classList.remove("selected"));b.classList.add("selected")});
-render();
-if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
-</script>
-<style>
-.calendar-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
+document.querySelectorAll("#durationChoices .choice").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll("#durationChoices .choice")
+      .forEach(x=>x.classList.remove("selected"));
+
+    b.classList.add("selected");
+    aggiornaAnteprimaPercorso();
+  };
+});
+
+
+document.querySelectorAll("#methodChoices .method-option").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll("#methodChoices .method-option")
+      .forEach(x=>x.classList.remove("selected"));
+
+    b.classList.add("selected");
+  };
+});
+
+
+document.querySelectorAll("#goalChoices .choice").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll("#goalChoices .choice")
+      .forEach(x=>x.classList.remove("selected"));
+
+    b.classList.add("selected");
+
+    document.getElementById("goalInput").value=b.dataset.v;
+
+    aggiornaAnteprimaPercorso();
+  };
+});
+
+
+function aggiornaAnteprimaPercorso(){
+
+  const goal=Number(document.getElementById("goalInput").value)||0;
+
+  const months=Number(
+    document.querySelector("#durationChoices .selected")?.dataset.v||12
+  );
+
+  document.getElementById("previewGoal").textContent=euro(goal);
+
+  document.getElementById("previewMonths").textContent=
+    months+" "+(months===1?"mese":"mesi");
+
+  document.getElementById("previewMonthly").textContent=
+    euro(goal/months);
 }
+
+
+document.getElementById("goalInput")?.addEventListener("input",()=>{
+  aggiornaAnteprimaPercorso();
+});
+
+
+aggiornaAnteprimaPercorso();
+</script>
+
+<style>
 .month-arrow{
   width:42px;
   height:42px;
@@ -485,6 +536,7 @@ if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch
 </style>
 
 <script>
+/* --- NUOVO CALENDARIO --- */
 /* --- NUOVO CALENDARIO --- */
 
 const mesiSalvadanaio=[
