@@ -1155,17 +1155,20 @@ function show(id){
   document.getElementById(id).classList.add("active");
   document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.screen===id));
 
-  if(id==="progress" && Number(state.saved)>=Number(state.goal)){
-    document.getElementById("milestoneModal").classList.remove("show");
-    document.getElementById("milestoneModal").classList.remove("final-milestone");
-
-    if(localStorage.getItem("completionCelebrationPlayed")!=="true"){
-      localStorage.setItem("completionCelebrationPlayed","true");
-      playCompletionCelebration();
-    }
-  }
-
   render();
+
+  if(
+    id==="progress" &&
+    Number(state.saved)>=Number(state.goal) &&
+    !state.celebrationSeen
+  ){
+    state.celebrationSeen=true;
+    localStorage.setItem(key,JSON.stringify(state));
+
+    setTimeout(()=>{
+      playCompletionCelebration();
+    },150);
+  }
 }
 
 function resetApp(){
