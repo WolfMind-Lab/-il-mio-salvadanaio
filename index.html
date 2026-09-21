@@ -565,14 +565,29 @@ function renderCalendar(){
 }
 
 function toggleChallenge(i,v){
+  const previousSaved=state.saved;
+
   const idx=state.done.findIndex(x=>x.m===currentMonth&&x.i===i);
-  if(idx>=0){state.done.splice(idx,1);state.saved=Math.max(0,state.saved-v);}
-  else{state.done.push({m:currentMonth,i,v});state.saved+=v;}
+
+  if(idx>=0){
+    state.done.splice(idx,1);
+    state.saved=Math.max(0,state.saved-v);
+  }else{
+    state.done.push({m:currentMonth,i,v});
+    state.saved+=v;
+  }
+
   save();
+
+  if(state.saved>previousSaved){
+    checkMilestoneAfterAction(previousSaved);
+  }
 }
 
 function toggleExtra(){
+  const previousSaved=state.saved;
   const value=extraFor(currentMonth);
+
   if(state.extraDone[currentMonth]){
     state.saved=Math.max(0,state.saved-value);
     delete state.extraDone[currentMonth];
@@ -580,7 +595,12 @@ function toggleExtra(){
     state.saved+=value;
     state.extraDone[currentMonth]=true;
   }
+
   save();
+
+  if(state.saved>previousSaved){
+    checkMilestoneAfterAction(previousSaved);
+  }
 }
 
 function cambiaMese(dir){
