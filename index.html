@@ -372,32 +372,116 @@ function updateMethod(){
 function updateBadges(){
   const container=document.getElementById("badgesContainer");
   if(!container)return;
-  const goal=Number(state.goal)||1000,saved=Math.max(0,Number(state.saved)||0),pct=Math.min(100,saved/goal*100);
-  const badges=[
-    ["🌱","Primo passo","Completa la prima casella.",state.done.length>0],
-    ["⭐","Primi €100","Metti da parte almeno €100.",saved>=100],
-    ["🌙","Un quarto del cammino","Raggiungi il 25%.",pct>=25],
-    ["✨","Metà strada","Raggiungi il 50%.",pct>=50],
-    ["💎","Quasi arrivata","Raggiungi il 75%.",pct>=75],
-    ["🏆","Obiettivo raggiunto","Completa il salvadanaio.",saved>=goal]
+
+  const goal=Number(state.goal)||1000;
+  const saved=Math.max(0,Number(state.saved)||0);
+  const pct=Math.min(100,saved/goal*100);
+
+  const first100=Math.min(100,goal);
+  const thresholds=[
+    first100,
+    goal*.25,
+    goal*.50,
+    goal*.75,
+    goal
   ];
+
+  const badges=[
+    {
+      icon:"🌱",
+      name:"Primo passo",
+      unlocked:state.done.length>0,
+      unlockedDesc:"Hai iniziato il tuo percorso.",
+      lockedDesc:"Completa la prima casella."
+    },
+    {
+      icon:"⭐",
+      name:"Primi €100",
+      unlocked:saved>=thresholds[0],
+      unlockedDesc:"Hai superato i primi €100!",
+      lockedDesc:"Ti mancano "+euro(Math.max(0,thresholds[0]-saved))+" per raggiungerlo."
+    },
+    {
+      icon:"🌙",
+      name:"Un quarto del cammino",
+      unlocked:saved>=thresholds[1],
+      unlockedDesc:"Hai raggiunto il 25% del tuo obiettivo.",
+      lockedDesc:"Ti mancano "+euro(Math.max(0,thresholds[1]-saved))+" per il 25%."
+    },
+    {
+      icon:"✨",
+      name:"Metà strada",
+      unlocked:saved>=thresholds[2],
+      unlockedDesc:"Sei arrivata a metà del tuo percorso.",
+      lockedDesc:"Ti mancano "+euro(Math.max(0,thresholds[2]-saved))+" per il 50%."
+    },
+    {
+      icon:"💎",
+      name:"Quasi arrivata",
+      unlocked:saved>=thresholds[3],
+      unlockedDesc:"Il traguardo è davvero vicino!",
+      lockedDesc:"Ti mancano "+euro(Math.max(0,thresholds[3]-saved))+" per il 75%."
+    },
+    {
+      icon:"🏆",
+      name:"Obiettivo raggiunto",
+      unlocked:saved>=goal,
+      unlockedDesc:"Hai completato il tuo salvadanaio!",
+      lockedDesc:"Ti mancano "+euro(Math.max(0,goal-saved))+" per completarlo."
+    }
+  ];
+
+  let nextText="🎉 Hai completato il tuo salvadanaio!";
+  let nextLabel="OBIETTIVO COMPLETATO";
+
+  if(saved<goal){
+    if(saved<thresholds[1]){
+      nextText="🌙 Il primo traguardo è il 25%";
+      nextLabel="PROSSIMO TRAGUARDO";
+    }else if(saved<thresholds[2]){
+      nextText="✨ Il prossimo passo è il 50%";
+      nextLabel="PROSSIMO TRAGUARDO";
+    }else if(saved<thresholds[3]){
+      nextText="💎 Ti aspetta il 75%";
+      nextLabel="PROSSIMO TRAGUARDO";
+    }else{
+      nextText="🏆 Sei vicinissima all'obiettivo!";
+      nextLabel="ULTIMO TRAGUARDO";
+    }
+  }
+
   container.innerHTML=`
     <div class="label">I miei traguardi</div>
     <h3 style="margin:5px 0 0">🏆 Piccoli passi, grandi conquiste</h3>
-    <div class="badges-grid">${badges.map(b=>`
-      <div class="badge-item ${b[3]?"unlocked":""}">
-        <div class="badge-icon">${b[0]}</div><div class="badge-name">${b[1]}</div>
-        <div class="badge-desc">${b[2]}</div>
-        <div class="badge-status">${b[3]?"✓ Sbloccato":"🔒 Da sbloccare"}</div>
-      </div>`).join("")}</div>
-    <div class="traguardo-box">
-      <div class="label">PROSSIMO TRAGUARDO</div>
-      <b>${saved>=goal?"🎉 Hai completato il tuo salvadanaio!":pct>=50?"💎 Ti aspetta il 75%":pct>=25?"✨ Il prossimo passo è il 50%":"🌙 Il primo traguardo è il 25%"}</b>
-      <div class="traguardo-progress"><div style="width:${pct}%"></div></div>
-      <div class="traguardo-text">${euro(saved)} di ${euro(goal)} · ${pct.toFixed(1)}%</div>
-    </div>`;
-}
 
+    <div class="badges-grid">
+      ${badges.map(b=>`
+        <div class="badge-item ${b.unlocked?"unlocked":""}">
+          <div class="badge-icon">${b.icon}</div>
+          <div class="badge-name">${b.name}</div>
+          <div class="badge-desc">
+            ${b.unlocked?b.unlockedDesc:b.lockedDesc}
+          </div>
+          <div class="badge-status">
+            ${b.unlocked?"✓ SBLOCCATO":"🔒 DA SBLOCCARE"}
+          </div>
+        </div>
+      `).join("")}
+    </div>
+
+    <div class="traguardo-box">
+      <div class="label">${nextLabel}</div>
+      <b>${nextText}</b>
+      <div class="traguardo-progress">
+        <div style="width:${pct}%"></div>
+      </div>
+      <div class="traguardo-text">
+        ${euro(saved)} di ${euro(goal)} · ${pct.toFixed(1)}%
+      </div>
+    </div>
+  `;
+}
+  
 function render(){
   const goal=Number(state.goal)||1000,saved=Math.max(0,Number(state.saved)||0);
   const pct=Math.min(100,saved/goal*100),rem=Math.max(0,goal-saved);
