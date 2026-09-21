@@ -307,46 +307,251 @@ html,body,.app{touch-action:manipulation}button,a,[role="button"]{touch-action:m
   position:absolute;
   inset:0;
   background:
-    radial-gradient(circle at 50% 48%,
-      rgba(255,215,120,.55) 0%,
-      rgba(255,215,120,.18) 22%,
-      rgba(7,16,31,.08) 45%,
-      transparent 70%);
-  animation:celebrationGlow 2.6s ease-out forwards;
+    radial-gradient(
+      circle at 50% 48%,
+      rgba(255,235,150,.95) 0%,
+      rgba(217,164,65,.42) 18%,
+      rgba(217,164,65,.16) 38%,
+      rgba(7,16,31,0) 68%
+    );
+  opacity:0;
+  animation:celebrationGlow 3.2s ease-out forwards;
+  pointer-events:none;
+}
+
+@keyframes celebrationGlow{
+  0%{
+    opacity:0;
+    transform:scale(.65);
+  }
+
+  20%{
+    opacity:1;
+    transform:scale(1);
+  }
+
+  65%{
+    opacity:.9;
+    transform:scale(1.08);
+  }
+
+  100%{
+    opacity:0;
+    transform:scale(1.25);
+  }
 }
 
 /* salvadanaio centrale */
 .celebration-pig{
   position:absolute;
   left:50%;
-  top:50%;
-  transform:translate(-50%,-50%) scale(1);
-  font-size:110px;
+  top:45%;
+  transform:translate(-50%,-50%) scale(.65);
+  font-size:125px;
   line-height:1;
-  z-index:5;
+  z-index:10;
   filter:
-    drop-shadow(0 10px 12px rgba(0,0,0,.22))
-    drop-shadow(0 0 22px rgba(217,164,65,.45));
-  animation:pigExplosion 1.25s cubic-bezier(.2,.8,.2,1) forwards;
+    drop-shadow(0 12px 18px rgba(0,0,0,.28))
+    drop-shadow(0 0 28px rgba(255,215,100,.65));
+  animation:pigCelebration 1.35s cubic-bezier(.2,.85,.2,1) forwards;
 }
 
-/* esplosione */
+@keyframes pigCelebration{
+  0%{
+    opacity:0;
+    transform:translate(-50%,-50%) scale(.35);
+  }
+
+  20%{
+    opacity:1;
+    transform:translate(-50%,-50%) scale(1.12);
+  }
+
+  38%{
+    transform:translate(-50%,-50%) scale(.94);
+  }
+
+  55%{
+    transform:translate(-50%,-50%) scale(1.04);
+  }
+
+  100%{
+    opacity:1;
+    transform:translate(-50%,-50%) scale(1);
+  }
+}
+
+/* messaggio della celebrazione */
+.celebration-message{
+  position:absolute;
+  left:50%;
+  top:68%;
+  width:90%;
+  transform:translate(-50%,20px);
+  text-align:center;
+  z-index:12;
+  opacity:0;
+  animation:celebrationMessage 2.8s ease-out .35s forwards;
+  pointer-events:none;
+}
+
+.celebration-message-label{
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.2em;
+  color:#f1c75b;
+  text-shadow:0 0 12px rgba(241,199,91,.7);
+  margin-bottom:8px;
+}
+
+.celebration-message-title{
+  color:#fffdf5;
+  font-family:Georgia,serif;
+  font-size:25px;
+  line-height:1.2;
+  font-weight:700;
+  text-shadow:
+    0 2px 8px rgba(0,0,0,.45),
+    0 0 18px rgba(255,215,100,.35);
+}
+
+.celebration-message-subtitle{
+  margin-top:8px;
+  color:#f8e7b0;
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:.03em;
+}
+
+.celebration-heart{
+  margin-top:12px;
+  color:#f1c75b;
+  font-size:24px;
+  text-shadow:0 0 14px rgba(241,199,91,.8);
+  animation:celebrationHeart 1s ease-in-out infinite;
+}
+
+@keyframes celebrationMessage{
+  0%{
+    opacity:0;
+    transform:translate(-50%,25px) scale(.92);
+  }
+
+  25%{
+    opacity:1;
+    transform:translate(-50%,0) scale(1);
+  }
+
+  75%{
+    opacity:1;
+    transform:translate(-50%,0) scale(1);
+  }
+
+  100%{
+    opacity:0;
+    transform:translate(-50%,-12px) scale(1.02);
+  }
+}
+
+@keyframes celebrationHeart{
+  0%,100%{
+    transform:scale(1);
+  }
+
+  50%{
+    transform:scale(1.2);
+  }
+}
+
+/* esplosione dorata */
 .celebration-burst{
   position:absolute;
   left:50%;
-  top:50%;
-  width:80px;
-  height:80px;
-  transform:translate(-50%,-50%);
+  top:45%;
+  width:90px;
+  height:90px;
+  transform:translate(-50%,-50%) scale(.2);
   border-radius:50%;
-  background:radial-gradient(circle,
-    #fff 0%,
-    #ffd76a 22%,
-    #d9a441 45%,
-    transparent 72%);
+  background:
+    radial-gradient(circle,
+      #fff 0%,
+      #fff4b0 18%,
+      #ffd76a 34%,
+      #d9a441 52%,
+      rgba(217,164,65,.35) 68%,
+      transparent 74%);
   opacity:0;
-  animation:burstExplosion .9s ease-out .35s forwards;
   z-index:4;
+  animation:burstCelebration 1.25s ease-out .15s forwards;
+  box-shadow:
+    0 0 35px rgba(255,215,100,.7),
+    0 0 80px rgba(217,164,65,.45);
+}
+
+@keyframes burstCelebration{
+  0%{
+    opacity:0;
+    transform:translate(-50%,-50%) scale(.15);
+  }
+
+  18%{
+    opacity:1;
+    transform:translate(-50%,-50%) scale(1.1);
+  }
+
+  55%{
+    opacity:.9;
+    transform:translate(-50%,-50%) scale(2.8);
+  }
+
+  100%{
+    opacity:0;
+    transform:translate(-50%,-50%) scale(5.5);
+  }
+}
+
+/* raggi dorati */
+.celebration-rays{
+  position:absolute;
+  left:50%;
+  top:45%;
+  width:260px;
+  height:260px;
+  transform:translate(-50%,-50%) scale(.3);
+  border-radius:50%;
+  opacity:0;
+  z-index:3;
+  background:
+    repeating-conic-gradient(
+      from 0deg,
+      rgba(241,199,91,.0) 0deg 8deg,
+      rgba(241,199,91,.65) 9deg 11deg,
+      rgba(241,199,91,.0) 12deg 20deg
+    );
+  filter:blur(1px);
+  animation:raysCelebration 2.4s ease-out .15s forwards;
+  pointer-events:none;
+}
+
+@keyframes raysCelebration{
+  0%{
+    opacity:0;
+    transform:translate(-50%,-50%) scale(.25) rotate(0deg);
+  }
+
+  20%{
+    opacity:.9;
+  }
+
+  60%{
+    opacity:.7;
+    transform:translate(-50%,-50%) scale(1.15) rotate(18deg);
+  }
+
+  100%{
+    opacity:0;
+    transform:translate(-50%,-50%) scale(1.45) rotate(35deg);
+  }
 }
 
 /* elementi volanti */
@@ -593,63 +798,86 @@ html,body,.app{touch-action:manipulation}button,a,[role="button"]{touch-action:m
 
   <div class="celebration-burst"></div>
 
+  <!-- SALVADANAIO -->
   <div class="celebration-pig">🐷</div>
+
+  <!-- BAGLIORE CENTRALE -->
+  <div class="celebration-rays"></div>
 
   <!-- BANCONOTE -->
   <div class="celebration-item money-note"
-       style="--x:-145px;--y:-180px;--r:-28deg;">💶</div>
+       style="--x:-155px;--y:-175px;--r:-28deg;">€10</div>
 
   <div class="celebration-item money-note"
-       style="--x:150px;--y:-145px;--r:25deg;">💶</div>
+       style="--x:145px;--y:-165px;--r:24deg;">€20</div>
 
   <div class="celebration-item money-note"
-       style="--x:-180px;--y:45px;--r:-18deg;">💶</div>
+       style="--x:-185px;--y:25px;--r:-18deg;">€50</div>
 
   <div class="celebration-item money-note"
-       style="--x:175px;--y:70px;--r:20deg;">💶</div>
+       style="--x:180px;--y:45px;--r:22deg;">€100</div>
 
   <div class="celebration-item money-note"
-       style="--x:-80px;--y:190px;--r:-12deg;">💶</div>
+       style="--x:-105px;--y:190px;--r:-12deg;">€10</div>
 
   <div class="celebration-item money-note"
-       style="--x:90px;--y:185px;--r:15deg;">💶</div>
+       style="--x:105px;--y:185px;--r:16deg;">€50</div>
 
   <!-- MONETE -->
   <div class="celebration-item money-coin"
-       style="--x:-95px;--y:-100px;--r:-35deg;">🪙</div>
+       style="--x:-90px;--y:-95px;--r:-35deg;">€</div>
 
   <div class="celebration-item money-coin"
-       style="--x:105px;--y:-90px;--r:35deg;">🪙</div>
+       style="--x:100px;--y:-105px;--r:35deg;">€</div>
 
   <div class="celebration-item money-coin"
-       style="--x:-130px;--y:115px;--r:-25deg;">🪙</div>
+       style="--x:-135px;--y:110px;--r:-25deg;">€</div>
 
   <div class="celebration-item money-coin"
-       style="--x:135px;--y:125px;--r:30deg;">🪙</div>
+       style="--x:140px;--y:120px;--r:30deg;">€</div>
 
   <div class="celebration-item money-coin"
-       style="--x:20px;--y:-210px;--r:18deg;">🪙</div>
+       style="--x:15px;--y:-205px;--r:18deg;">€</div>
 
   <div class="celebration-item money-coin"
-       style="--x:-25px;--y:210px;--r:-20deg;">🪙</div>
+       style="--x:-20px;--y:210px;--r:-20deg;">€</div>
 
   <!-- SCINTILLE -->
-  <div class="celebration-spark" style="left:18%;top:28%;animation-delay:.2s;">✦</div>
-  <div class="celebration-spark" style="left:76%;top:25%;animation-delay:.35s;">✧</div>
-  <div class="celebration-spark" style="left:12%;top:62%;animation-delay:.5s;">✦</div>
-  <div class="celebration-spark" style="left:82%;top:60%;animation-delay:.4s;">✧</div>
-  <div class="celebration-spark" style="left:48%;top:18%;animation-delay:.25s;">✦</div>
+  <div class="celebration-spark spark-1">✦</div>
+  <div class="celebration-spark spark-2">✧</div>
+  <div class="celebration-spark spark-3">✦</div>
+  <div class="celebration-spark spark-4">✧</div>
+  <div class="celebration-spark spark-5">✦</div>
+  <div class="celebration-spark spark-6">✧</div>
 
   <!-- CORIANDOLI -->
-  <div class="confetti" style="left:8%;--drift:45px;animation-delay:.05s;"></div>
-  <div class="confetti" style="left:16%;--drift:-30px;animation-delay:.18s;"></div>
-  <div class="confetti" style="left:25%;--drift:55px;animation-delay:.1s;"></div>
-  <div class="confetti" style="left:35%;--drift:-45px;animation-delay:.3s;"></div>
-  <div class="confetti" style="left:47%;--drift:35px;animation-delay:.12s;"></div>
-  <div class="confetti" style="left:58%;--drift:-55px;animation-delay:.25s;"></div>
-  <div class="confetti" style="left:68%;--drift:40px;animation-delay:.08s;"></div>
-  <div class="confetti" style="left:78%;--drift:-35px;animation-delay:.2s;"></div>
-  <div class="confetti" style="left:90%;--drift:50px;animation-delay:.15s;"></div>
+  <div class="confetti confetti-1"></div>
+  <div class="confetti confetti-2"></div>
+  <div class="confetti confetti-3"></div>
+  <div class="confetti confetti-4"></div>
+  <div class="confetti confetti-5"></div>
+  <div class="confetti confetti-6"></div>
+  <div class="confetti confetti-7"></div>
+  <div class="confetti confetti-8"></div>
+  <div class="confetti confetti-9"></div>
+  <div class="confetti confetti-10"></div>
+
+  <!-- MESSAGGIO FINALE -->
+  <div class="celebration-message">
+    <div class="celebration-message-label">
+      OBIETTIVO COMPLETATO
+    </div>
+
+    <div class="celebration-message-title">
+      Hai completato il tuo salvadanaio!
+    </div>
+
+    <div class="celebration-message-subtitle">
+      I tuoi sogni sono più vicini!
+    </div>
+
+    <div class="celebration-heart">♥</div>
+  </div>
 
 </div>
 <section id="welcome" class="screen welcome-screen active">
