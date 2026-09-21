@@ -314,8 +314,42 @@ if(!Number.isFinite(currentMonth)) currentMonth=meseAssoluto();
 if(!Number.isFinite(state.months)||state.months<1) state.months=12;
 if(!state.extraDone||typeof state.extraDone!=="object") state.extraDone={};
 if(!Array.isArray(state.done)) state.done=[];
+if(!Array.isArray(state.celebrated))state.celebrated=[];
 if(!Number.isFinite(state.startMonth)){state.startMonth=meseAssoluto();currentMonth=state.startMonth;}
 
+function checkMilestoneAfterAction(previousSaved){
+  const goal=Number(state.goal)||1000;
+  const saved=Math.max(0,Number(state.saved)||0);
+
+  if(!Array.isArray(state.celebrated))state.celebrated=[];
+
+  const milestones=[
+    {id:"first",value:1,title:"Primo passo",icon:"🌱",text:"Hai iniziato il tuo percorso."},
+    {id:"100",value:Math.min(100,goal),title:"Primi €100",icon:"⭐",text:"Hai raggiunto i primi €100!"},
+    {id:"25",value:goal*.25,title:"Un quarto del cammino",icon:"🌙",text:"Hai raggiunto il 25% del tuo obiettivo."},
+    {id:"50",value:goal*.50,title:"Metà strada",icon:"✨",text:"Sei arrivata a metà del tuo percorso."},
+    {id:"75",value:goal*.75,title:"Quasi arrivata",icon:"💎",text:"Hai raggiunto il 75%. Il traguardo è vicino!"},
+    {id:"goal",value:goal,title:"Obiettivo raggiunto",icon:"🏆",text:"Hai completato il tuo salvadanaio!"}
+  ];
+
+  const justUnlocked=milestones.find(m=>
+    previousSaved<m.value &&
+    saved>=m.value &&
+    !state.celebrated.includes(m.id)
+  );
+
+  if(!justUnlocked)return;
+
+  state.celebrated.push(justUnlocked.id);
+  localStorage.setItem(key,JSON.stringify(state));
+
+  setTimeout(()=>{
+    alert(
+      justUnlocked.icon+" "+justUnlocked.title+
+      "\n\n"+justUnlocked.text
+    );
+  },100);
+}
 function save(){localStorage.setItem(key,JSON.stringify(state));render();}
 function indicePercorso(mese){return mese-state.startMonth;}
 function dataMese(mese){return new Date(Math.floor(mese/12),((mese%12)+12)%12,1);}
