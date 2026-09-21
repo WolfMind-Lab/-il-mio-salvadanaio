@@ -354,20 +354,78 @@ html,body,.app{touch-action:manipulation}button,a,[role="button"]{touch-action:m
   position:absolute;
   left:50%;
   top:50%;
-  font-size:42px;
   opacity:0;
   z-index:6;
-  animation:moneyFly 2.4s cubic-bezier(.15,.75,.25,1) forwards;
+  transform:translate(-50%,-50%) scale(.4) rotate(0deg);
+  animation:moneyFly 2.5s cubic-bezier(.15,.75,.25,1) forwards;
+  pointer-events:none;
+  will-change:transform,opacity;
 }
 
-/* banconote */
 .money-note{
-  font-size:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:72px;
+  height:38px;
+  border:2px solid rgba(125,88,20,.75);
+  border-radius:6px;
+  background:linear-gradient(135deg,#f8e7a8,#d9a441,#f7df91);
+  color:#6f5015;
+  font-size:20px;
+  font-weight:900;
+  box-shadow:
+    0 5px 12px rgba(0,0,0,.25),
+    0 0 12px rgba(217,164,65,.35);
+  transform:rotate(-8deg);
 }
 
-/* monete */
 .money-coin{
-  font-size:38px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:3px solid #b77c19;
+  background:radial-gradient(circle at 35% 30%,#fff1a8,#e3b54e 55%,#b77c19);
+  color:#8b6114;
+  font-size:17px;
+  font-weight:900;
+  box-shadow:
+    0 5px 10px rgba(0,0,0,.25),
+    0 0 14px rgba(217,164,65,.4);
+}
+
+@keyframes moneyFly{
+  0%{
+    opacity:0;
+    transform:translate(-50%,-50%) scale(.25) rotate(0deg);
+  }
+
+  12%{
+    opacity:1;
+    transform:translate(
+      calc(-50% + var(--x1)),
+      calc(-50% + var(--y1))
+    ) scale(1) rotate(var(--r1));
+  }
+
+  55%{
+    opacity:1;
+    transform:translate(
+      calc(-50% + var(--x2)),
+      calc(-50% + var(--y2))
+    ) scale(1.08) rotate(var(--r2));
+  }
+
+  100%{
+    opacity:0;
+    transform:translate(
+      calc(-50% + var(--x3)),
+      calc(-50% + var(--y3))
+    ) scale(.72) rotate(var(--r3));
+  }
 }
 
 /* coriandoli */
@@ -460,23 +518,32 @@ html,body,.app{touch-action:manipulation}button,a,[role="button"]{touch-action:m
 
 @keyframes moneyFly{
   0%{
-    transform:translate(-50%,-50%) scale(.3) rotate(0deg);
     opacity:0;
+    transform:translate(-50%,-50%) scale(.25) rotate(0deg);
   }
 
   12%{
     opacity:1;
+    transform:translate(
+      calc(-50% + var(--x) * .18),
+      calc(-50% + var(--y) * .18)
+    ) scale(1) rotate(var(--r));
+  }
+
+  55%{
+    opacity:1;
+    transform:translate(
+      calc(-50% + var(--x) * .72),
+      calc(-50% + var(--y) * .72)
+    ) scale(1.08) rotate(calc(var(--r) * 1.5));
   }
 
   100%{
-    transform:
-      translate(
-        calc(-50% + var(--x)),
-        calc(-50% + var(--y))
-      )
-      scale(1)
-      rotate(var(--r));
     opacity:0;
+    transform:translate(
+      calc(-50% + var(--x)),
+      calc(-50% + var(--y))
+    ) scale(.72) rotate(calc(var(--r) * 2));
   }
 }
 
