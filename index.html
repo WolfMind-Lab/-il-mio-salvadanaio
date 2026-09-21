@@ -237,7 +237,7 @@ const euro=n=>new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"}).f
 function meseAssoluto(d=new Date()){return d.getFullYear()*12+d.getMonth();}
 function nuovaState(){
   const start=meseAssoluto();
-  return {goal:1000,months:12,method:"variable",saved:0,done:[],extraDone:{},startMonth:start};
+  return {goal:1000,months:12,method:"variable",saved:0,done:[],extraDone:{},celebrated:[],startMonth:start};
 }
 
 function migraStatoV1(){
@@ -565,7 +565,7 @@ function createPlan(){
   const method=document.querySelector("#methodChoices .selected")?.dataset.v||"variable";
   const start=meseAssoluto();
 
-  state={goal,months,method,saved:0,done:[],extraDone:{},startMonth:start};
+  state={goal,months,method,saved:0,done:[],extraDone:{},celebrated:[],startMonth:start};
   currentMonth=start;
   localStorage.setItem(key,JSON.stringify(state));
   render();
