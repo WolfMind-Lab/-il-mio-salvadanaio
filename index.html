@@ -825,18 +825,17 @@ function playCompletionCelebration(){
 
   if(!celebration)return;
 
-  /* riattiva le animazioni */
   celebration.classList.remove("show");
 
   void celebration.offsetWidth;
 
   celebration.classList.add("show");
 
-  /* la festa dura circa 3 secondi */
   setTimeout(()=>{
     celebration.classList.remove("show");
-  },3000);
+  },3200);
 }
+
 function checkMilestoneAfterAction(previousSaved){
   const goal=Number(state.goal)||1000;
   const saved=Math.max(0,Number(state.saved)||0);
