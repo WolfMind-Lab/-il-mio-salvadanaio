@@ -861,13 +861,10 @@ function checkMilestoneAfterAction(previousSaved){
   if(!justUnlocked)return;
 
 state.celebrated.push(justUnlocked.id);
-
-if(justUnlocked.id==="goal"){
-  playCompletionCelebration();
-}
   localStorage.setItem(key,JSON.stringify(state));
 
-    setTimeout(()=>{
+    if(justUnlocked.id!=="goal"){
+  setTimeout(()=>{
     document.getElementById("milestoneIcon").textContent=justUnlocked.icon;
     document.getElementById("milestoneTitle").textContent=justUnlocked.title;
     document.getElementById("milestoneText").textContent=justUnlocked.text;
@@ -876,6 +873,7 @@ if(justUnlocked.id==="goal"){
     modal.classList.toggle("final-milestone",justUnlocked.id==="goal");
     modal.classList.add("show");
   },100);
+}
 }
 function save(){localStorage.setItem(key,JSON.stringify(state));render();}
 function indicePercorso(mese){return mese-state.startMonth;}
