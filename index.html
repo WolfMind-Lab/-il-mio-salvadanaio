@@ -163,6 +163,38 @@ html,body,.app{touch-action:manipulation}button,a,[role="button"]{touch-action:m
   }
 }
 
+.milestone-card:after{
+  content:"✦  ·  ✧  ·  ✦";
+  position:absolute;
+  left:0;
+  right:0;
+  top:18px;
+  color:var(--gold);
+  font-size:13px;
+  letter-spacing:14px;
+  opacity:0;
+  pointer-events:none;
+  animation:milestoneSparkles 1.8s ease-out .15s forwards;
+}
+
+@keyframes milestoneSparkles{
+  0%{
+    opacity:0;
+    transform:translateY(18px) scale(.7);
+  }
+  25%{
+    opacity:1;
+  }
+  70%{
+    opacity:.75;
+    transform:translateY(-8px) scale(1.05);
+  }
+  100%{
+    opacity:0;
+    transform:translateY(-24px) scale(1.15);
+  }
+}
+
 .milestone-icon{
   position:relative;
   font-size:64px;
