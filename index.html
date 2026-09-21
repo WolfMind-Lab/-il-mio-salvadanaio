@@ -194,6 +194,27 @@ html,body,.app{touch-action:manipulation}button,a,[role="button"]{touch-action:m
     transform:translateY(-24px) scale(1.15);
   }
 }
+.milestone-modal.final-milestone .milestone-card{
+  background:linear-gradient(145deg,#fffdf4,#ffe9a8);
+  border-color:#d9a441;
+  box-shadow:0 20px 70px #d9a44155,0 0 35px #d9a44133;
+}
+
+.milestone-modal.final-milestone .milestone-icon{
+  animation:finalMilestoneIcon 1.2s ease-in-out infinite;
+}
+
+@keyframes finalMilestoneIcon{
+  0%,100%{
+    transform:scale(1) rotate(0deg);
+  }
+  25%{
+    transform:scale(1.12) rotate(-4deg);
+  }
+  75%{
+    transform:scale(1.12) rotate(4deg);
+  }
+}
 
 .milestone-icon{
   position:relative;
@@ -531,15 +552,15 @@ function checkMilestoneAfterAction(previousSaved){
   state.celebrated.push(justUnlocked.id);
   localStorage.setItem(key,JSON.stringify(state));
 
-  setTimeout(()=>{
-  document.getElementById("milestoneIcon").textContent=justUnlocked.icon;
-  document.getElementById("milestoneTitle").textContent=justUnlocked.title;
-  document.getElementById("milestoneText").textContent=justUnlocked.text;
-  document.getElementById("milestoneModal").classList.add("show");
-},100);
-}
-function closeMilestone(){
-  document.getElementById("milestoneModal").classList.remove("show");
+    setTimeout(()=>{
+    document.getElementById("milestoneIcon").textContent=justUnlocked.icon;
+    document.getElementById("milestoneTitle").textContent=justUnlocked.title;
+    document.getElementById("milestoneText").textContent=justUnlocked.text;
+
+    const modal=document.getElementById("milestoneModal");
+    modal.classList.toggle("final-milestone",justUnlocked.id==="goal");
+    modal.classList.add("show");
+  },100);
 }
 function save(){localStorage.setItem(key,JSON.stringify(state));render();}
 function indicePercorso(mese){return mese-state.startMonth;}
