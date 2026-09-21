@@ -825,11 +825,6 @@ function playCompletionCelebration(){
 
   if(!celebration)return;
 
-  /* evita che la festa venga riprodotta più volte */
-  if(localStorage.getItem("completionCelebrationPlayed")==="true")return;
-
-  localStorage.setItem("completionCelebrationPlayed","true");
-
   /* riattiva le animazioni */
   celebration.classList.remove("show");
 
