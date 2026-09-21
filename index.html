@@ -145,9 +145,22 @@ html,body,.app{touch-action:manipulation}button,a,[role="button"]{touch-action:m
 .milestone-stars{
   position:relative;
   color:var(--gold);
-  font-size:15px;
+  font-size:18px;
   letter-spacing:.08em;
   margin-bottom:8px;
+  animation:milestoneStars 1.8s ease-in-out infinite;
+  text-shadow:0 0 8px #d9a44166;
+}
+
+@keyframes milestoneStars{
+  0%,100%{
+    opacity:.65;
+    transform:scale(.95);
+  }
+  50%{
+    opacity:1;
+    transform:scale(1.12);
+  }
 }
 
 .milestone-icon{
