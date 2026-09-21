@@ -862,7 +862,7 @@ function checkMilestoneAfterAction(previousSaved){
 state.celebrated.push(justUnlocked.id);
   localStorage.setItem(key,JSON.stringify(state));
 
-    if(justUnlocked.id!=="goal"){
+    if(true){
   setTimeout(()=>{
     document.getElementById("milestoneIcon").textContent=justUnlocked.icon;
     document.getElementById("milestoneTitle").textContent=justUnlocked.title;
@@ -871,7 +871,7 @@ state.celebrated.push(justUnlocked.id);
     const modal=document.getElementById("milestoneModal");
     modal.classList.toggle("final-milestone",justUnlocked.id==="goal");
     modal.classList.add("show");
-  },100);
+    },3350);
 }
 }
 function save(){localStorage.setItem(key,JSON.stringify(state));render();}
